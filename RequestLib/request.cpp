@@ -1,27 +1,68 @@
 #include <requestlib/request.hpp>
-#include <requestlib/curl.hpp>
+
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+#define CPPHTTPLIB_ZLIB_SUPPORT
+#include <httplib.h>
+
+#include <url.h>
 
 #include <logger/log.hpp>
 
-#include <cstring>
-
-extern "C" {
-    #include <curl/curl.h>
-}
-
 Request::Request(const std::string &url, RequestMethod method, const std::string &custom_method)
-    : _url(url)
+    : _full_url(url),
+      _custom_method(custom_method)
 {
-    // assign the request method as string
-    if (method != RequestMethod::CUSTOM)
-    {
-        // cast enum name to string
-        //this->_method = ~method;
+    // set request method as string
+    this->_method = RequestMethodString(method, custom_method);
+
+    // parse url
+    try {
+        this->_url = std::make_shared<Url::Url>(url);
+    } catch (Url::UrlParseException &e) {
+        LOG_ERROR("Request: Url::UrlParseException: %s", e.what());
+        this->_url = nullptr;
+        return;
     }
-    else
+
+    // fixup some derps from the url parsing library
+    if (this->_url->scheme() == "http" && this->_url->port() == 0)
     {
-        this->_method = custom_method;
+        this->_url->setPort(80);
     }
+    else if (this->_url->scheme() == "https" && this->_url->port() == 0)
+    {
+        this->_url->setPort(443);
+    }
+
+    if (this->_url->path().empty())
+    {
+        this->_url->setPath("/");
+    }
+
+#ifdef DEBUG_BUILD
+    LOG_INFO(
+        "Request[URL]: %s\n"
+        "  Scheme:      %s\n"
+        "  Userinfo:    %s\n"
+        "  Host:        %s\n"
+        "  Port:        %i\n"
+        "  Path:        %s\n"
+        "  Params:      %s\n"
+        "  Query:       %s\n"
+        "  Fragment:    %s\n"
+        "  Raw Str:     %s",
+        url,
+        this->_url->scheme(),
+        this->_url->userinfo(),
+        this->_url->host(),
+        this->_url->port(),
+        this->_url->path(),
+        this->_url->params(),
+        this->_url->query(),
+        this->_url->fragment(),
+        this->_url->str()
+    );
+#endif
 }
 
 Request::~Request()
@@ -30,35 +71,85 @@ Request::~Request()
 
 void Request::setRequestBody(const std::string &data)
 {
-    this->_data = std::make_shared<char>(*strdup(data.c_str()));
-}
-
-void Request::setRequestBody(const char *data)
-{
-    this->_data = std::make_shared<char>(*strdup(data));
+    this->_data = data;
 }
 
 void Request::setHeader(const std::string &header, const std::string &value)
 {
-    LOG_TODO("Request: setHeader(const std::string &header, const std::string &value)");
+    this->_headers.insert(std::pair<std::string, std::string>(header, value));
 }
 
-bool Request::performRequest()
+Response Request::performRequest()
 {
-    // TODO: request method, request body, response data handling, ...
-    LOG_TODO("Request: performRequest() is incomplete!");
+    struct ClientWrapper {
+        ClientWrapper(const Url::Url *url)
+            : url(url)
+        {
+        }
 
-    auto handle = libcurl::getNewHandle(this->_url);
+        // wrapper around Client and SSLClient to support both at the same time
+        bool send(httplib::Request &req, httplib::Response &res)
+        {
+            if (this->url->scheme() == "https")
+            {
+                httplib::SSLClient client(this->url->host().c_str(), this->url->port());
+                // TODO: certificate verify support toggle
+                return client.send(req, res);
+            }
+            else
+            {
+                httplib::Client client(this->url->host().c_str(), this->url->port());
+                return client.send(req, res);
+            }
+        }
 
-    // FIXME: response is straight spammed into terminal, need this as string though...
-    auto ret = libcurl::performRequest(handle);
+    private:
+        const Url::Url *url;
+    };
 
-    if (ret == CURLE_OK)
+    // create http client instance with parsed URL
+    ClientWrapper c(this->_url.get());
+
+    // compose http request
+    httplib::Request req;
+
+    // make headers for httplib
+    for (auto&& h : this->_headers)
     {
-        return true;
+        req.set_header(h.first.c_str(), h.second.c_str());
     }
-    else
+
+    // set http request method
+    req.method = this->_method;
+
+    // set http request path
+    req.path = this->_url->path();
+
+    // set request body
+    req.body = this->_data;
+
+    auto res = std::make_shared<httplib::Response>();
+
+    if (c.send(req, *res))
     {
-        return false;
+        // create response object
+        Response response;
+        response.setSuccess(true);
+        response.setStatus(res->status);
+
+        std::multimap<std::string, std::string> headers;
+        for (auto&& h : res->headers)
+        {
+            headers.insert(h);
+        }
+        response.setHeaders(headers);
+
+        response.setBody(res->body);
+
+        return response;
     }
+
+    // create invalid empty response
+    LOG_ERROR("Request: server request failed!");
+    return Response();
 }

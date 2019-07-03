@@ -1,13 +1,12 @@
 #ifndef REQUESTLIB_METHODS_HPP
 #define REQUESTLIB_METHODS_HPP
 
-//#include <enum.hpp>
+#include <string>
 
 /**
  * List of common HTTP request methods.
  */
 
-//DECLARE_ENUM_WITH_TYPE(RequestMethod, int,
 enum class RequestMethod {
     GET,
     POST,
@@ -26,7 +25,8 @@ enum class RequestMethod {
     VIEW,
 
     CUSTOM, // used for custom request methods
-//);
 };
+
+const std::string RequestMethodString(RequestMethod, const std::string &custom = {});
 
 #endif // REQUESTLIB_METHODS_HPP
