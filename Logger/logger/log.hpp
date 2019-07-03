@@ -19,10 +19,9 @@
 
 struct logger_base final
 {
-    static auto *self()
-    {
-        return _self.get();
-    }
+public:
+    static inline auto *self()
+    { return _self.get(); }
 
     template<typename... Arguments>
     friend void LOG(Arguments... args);
@@ -91,9 +90,6 @@ private:
         return fmt::sprintf(message, std::forward<Arguments>(args)...);
     }
 };
-
-// initialize instance
-auto logger_base::_self = std::make_unique<logger_base>();
 
 
 // global logging functions
