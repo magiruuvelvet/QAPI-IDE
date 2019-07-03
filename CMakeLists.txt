@@ -16,6 +16,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}"
 # Set C++ standard macro
 include(SetCppStandard)
 include(include_fmt_lib)
+include(include_enum_lib)
 
 # Folder where generated files go
 set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/Generated)

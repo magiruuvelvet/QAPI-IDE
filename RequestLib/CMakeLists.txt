@@ -26,6 +26,7 @@ set_target_properties(RequestLib PROPERTIES PREFIX "")
 set_target_properties(RequestLib PROPERTIES OUTPUT_NAME "RequestLib")
 
 include_fmt_lib(RequestLib)
+include_enum_lib(RequestLib)
 
 target_include_directories(RequestLib PRIVATE "${PROJECT_SOURCE_DIR}/RequestLib")
 target_include_directories(RequestLib PRIVATE "${CURL_INCLUDE_DIRS}")

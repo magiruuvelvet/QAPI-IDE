@@ -20,6 +20,7 @@ set_target_properties(JsonViewer PROPERTIES PREFIX "")
 set_target_properties(JsonViewer PROPERTIES OUTPUT_NAME "JsonViewer")
 
 include_fmt_lib(JsonViewer)
+include_enum_lib(JsonViewer)
 
 target_include_directories(JsonViewer PRIVATE "${PROJECT_SOURCE_DIR}/JsonViewer")
 target_include_directories(JsonViewer PRIVATE "${LOGGER_INCLUDE_DIR}")

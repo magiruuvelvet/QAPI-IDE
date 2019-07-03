@@ -15,6 +15,7 @@ set_target_properties(Tests PROPERTIES PREFIX "")
 set_target_properties(Tests PROPERTIES OUTPUT_NAME "qapi-ide-tests")
 
 include_fmt_lib(Tests)
+include_enum_lib(Tests)
 
 target_link_libraries(Tests
 PRIVATE
