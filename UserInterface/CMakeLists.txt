@@ -44,6 +44,7 @@ PUBLIC
     Qt5::Gui
     Qt5::Widgets
 PRIVATE
+    Logger
     RequestLib
     JsonViewer
     fmt
@@ -52,3 +53,4 @@ PRIVATE
 target_include_directories(UserInterface PRIVATE "${PROJECT_SOURCE_DIR}/UserInterface")
 target_include_directories(UserInterface PRIVATE "${REQUESTLIB_INCLUDE_DIR}")
 target_include_directories(UserInterface PRIVATE "${JSONVIEWER_INCLUDE_DIR}")
+target_include_directories(UserInterface PRIVATE "${LOGGER_INCLUDE_DIR}")

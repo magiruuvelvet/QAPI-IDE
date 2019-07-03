@@ -22,6 +22,12 @@ set_target_properties(JsonViewer PROPERTIES OUTPUT_NAME "JsonViewer")
 include_fmt_lib(JsonViewer)
 
 target_include_directories(JsonViewer PRIVATE "${PROJECT_SOURCE_DIR}/JsonViewer")
+target_include_directories(JsonViewer PRIVATE "${LOGGER_INCLUDE_DIR}")
 set(JSONVIEWER_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/JsonViewer" PARENT_SCOPE)
 
-target_link_libraries(JsonViewer PRIVATE nlohmann_json::nlohmann_json fmt)
+target_link_libraries(JsonViewer
+PRIVATE
+    nlohmann_json::nlohmann_json
+    Logger
+    fmt
+)

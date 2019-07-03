@@ -70,7 +70,7 @@ message(STATUS "${Esc}[1mConfiguring target fmt...${Esc}[m")
 add_subdirectory("${PROJECT_SOURCE_DIR}/Libs/fmt")
 
 # Targets
+add_subdirectory(Logger)
 add_subdirectory(RequestLib)
 add_subdirectory(JsonViewer)
-
 add_subdirectory(UserInterface)

@@ -29,11 +29,13 @@ include_fmt_lib(RequestLib)
 
 target_include_directories(RequestLib PRIVATE "${PROJECT_SOURCE_DIR}/RequestLib")
 target_include_directories(RequestLib PRIVATE "${CURL_INCLUDE_DIRS}")
+target_include_directories(RequestLib PRIVATE "${LOGGER_INCLUDE_DIR}")
 set(REQUESTLIB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/RequestLib" PARENT_SCOPE)
 
 target_link_libraries(RequestLib
 PUBLIC
     "${CURL_LIBRARIES}"
 PRIVATE
+    Logger
     fmt
 )
