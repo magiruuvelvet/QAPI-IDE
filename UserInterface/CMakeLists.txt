@@ -37,6 +37,7 @@ set_target_properties(UserInterface PROPERTIES PREFIX "")
 set_target_properties(UserInterface PROPERTIES OUTPUT_NAME "qapi-ide")
 
 include_fmt_lib(UserInterface)
+include_enum_lib(UserInterface)
 
 target_link_libraries(UserInterface
 PUBLIC
