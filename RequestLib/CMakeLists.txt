@@ -1,6 +1,7 @@
 # RequestLib
 
-include(SetCppStandard)
+string(ASCII 27 Esc)
+message(STATUS "${Esc}[1mConfiguring target RequestLib...${Esc}[m")
 
 file(GLOB_RECURSE SourceList_RequestLib
     "*.cpp"
@@ -30,4 +31,9 @@ target_include_directories(RequestLib PRIVATE "${PROJECT_SOURCE_DIR}/RequestLib"
 target_include_directories(RequestLib PRIVATE "${CURL_INCLUDE_DIRS}")
 set(REQUESTLIB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/RequestLib" PARENT_SCOPE)
 
-target_link_libraries(RequestLib PRIVATE "${CURL_LIBRARIES}" fmt)
+target_link_libraries(RequestLib
+PUBLIC
+    "${CURL_LIBRARIES}"
+PRIVATE
+    fmt
+)

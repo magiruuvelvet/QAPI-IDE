@@ -1,6 +1,7 @@
 # JsonViewer
 
-include(SetCppStandard)
+string(ASCII 27 Esc)
+message(STATUS "${Esc}[1mConfiguring target JsonViewer...${Esc}[m")
 
 file(GLOB_RECURSE SourceList_JsonViewer
     "*.cpp"

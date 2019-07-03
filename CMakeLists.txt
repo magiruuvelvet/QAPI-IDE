@@ -63,7 +63,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib-static)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+string(ASCII 27 Esc)
+
 # 3rd party libraries
+message(STATUS "${Esc}[1mConfiguring target fmt...${Esc}[m")
 add_subdirectory("${PROJECT_SOURCE_DIR}/Libs/fmt")
 
 # Targets
