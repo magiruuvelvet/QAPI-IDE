@@ -1,0 +1,6 @@
+# Qt Creator
+CMakeLists.txt.user
+CMakeLists.txt.user.*
+
+# In-tree build directory (an external build dir is recommended)
+/build

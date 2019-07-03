@@ -1,0 +1,6 @@
+[submodule "Libs/json"]
+	path = Libs/json
+	url = https://github.com/nlohmann/json.git
+[submodule "Libs/fmt"]
+	path = Libs/fmt
+	url = https://github.com/fmtlib/fmt.git
