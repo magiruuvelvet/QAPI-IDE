@@ -29,7 +29,8 @@ not tested nor recommended and may contain unwanted bugs. If possible try to use
 versions of said dependencies.
 
  - Qt 5.12+ (for the user interface only)
- - libcurl 7.65+
+ - OpenSSL
+ - zlib
 
 Additional build requirements are:
 
