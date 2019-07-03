@@ -39,6 +39,9 @@ public:
     friend void LOG_FATAL(Arguments... args);
 
     template<typename... Arguments>
+    friend void LOG_TODO(Arguments... args);
+
+    template<typename... Arguments>
     friend std::string format(Arguments... args);
 
 private:
@@ -50,6 +53,7 @@ private:
         WARNING,
         ERROR,
         FATAL,
+        TODO,
     };
 
     // TODO: support for files and optimal terminal formatting
@@ -82,6 +86,12 @@ private:
     inline void fatal(const std::string &message, Arguments... args)
     {
         fmt::fprintf(std::cerr, "FATAL: " + message + "\n", std::forward<Arguments>(args)...);
+    }
+
+    template<typename... Arguments>
+    inline void todo(const std::string &message, Arguments... args)
+    {
+        fmt::fprintf(std::cout, "TODO: " + message + "\n", std::forward<Arguments>(args)...);
     }
 
     template<typename... Arguments>
@@ -123,6 +133,12 @@ template<typename... Arguments>
 inline void LOG_FATAL(Arguments... args)
 {
     logger_base::self()->fatal(std::forward<Arguments>(args)...);
+}
+
+template<typename... Arguments>
+inline void LOG_TODO(Arguments... args)
+{
+    logger_base::self()->todo(std::forward<Arguments>(args)...);
 }
 
 template<typename... Arguments>
