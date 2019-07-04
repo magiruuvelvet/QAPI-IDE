@@ -7,10 +7,11 @@
 #include <url.h>
 
 #include <logger/log.hpp>
+#include <logger_support/request.hpp>
+#include <logger_support/url.hpp>
 
 Request::Request(const std::string &url, RequestMethod method, const std::string &custom_method)
-    : _full_url(url),
-      _custom_method(custom_method)
+    : _full_url(url)
 {
     // set request method as string
     this->_method = RequestMethodString(method, custom_method);
@@ -25,6 +26,12 @@ Request::Request(const std::string &url, RequestMethod method, const std::string
     }
 
     // fixup some derps from the url parsing library
+    if (this->_url->scheme().empty())
+    {
+        // assume http by default for local development
+        this->_url->setScheme("http");
+    }
+
     if (this->_url->scheme() == "http" && this->_url->port() == 0)
     {
         this->_url->setPort(80);
@@ -40,18 +47,16 @@ Request::Request(const std::string &url, RequestMethod method, const std::string
     }
 
 #ifdef DEBUG_BUILD
+    LOG_INFO("{}, {}", *this, *this->_url);
     LOG_INFO(
-        "Request[URL]: {}\n"
-        "  Scheme:     {}\n"
-        "  Userinfo:   {}\n"
-        "  Host:       {}\n"
-        "  Port:       {}\n"
-        "  Path:       {}\n"
-        "  Params:     {}\n"
-        "  Query:      {}\n"
-        "  Fragment:   {}\n"
-        "  Raw Str:    {}",
-        url,
+              "Scheme:     {}\n"
+        "      Userinfo:   {}\n"
+        "      Host:       {}\n"
+        "      Port:       {}\n"
+        "      Path:       {}\n"
+        "      Params:     {}\n"
+        "      Query:      {}\n"
+        "      Fragment:   {}\n",
         this->_url->scheme(),
         this->_url->userinfo(),
         this->_url->host(),

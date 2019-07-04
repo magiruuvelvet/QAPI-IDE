@@ -22,8 +22,8 @@ public:
     inline const auto &urlString() const
     { return this->_full_url; }
 
-    inline const auto &url() const
-    { return this->_url; }
+    inline const auto *url() const
+    { return this->_url.get(); }
 
     inline const auto &method() const
     { return this->_method; }
@@ -34,13 +34,12 @@ public:
     // adds a HTTP header to the request
     void setHeader(const std::string &header, const std::string &value);
 
-    // perform the http request and receive a response object
+    // perform the HTTP request and receive a response object
     Response performRequest();
 
 private:
     std::string _full_url;
     std::string _method;
-    std::string _custom_method;
 
     std::shared_ptr<Url::Url> _url;
     std::map<std::string, std::string> _headers;
