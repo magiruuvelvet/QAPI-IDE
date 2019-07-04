@@ -2,20 +2,12 @@
 #define LOGGER_LOG_HPP
 
 #include <iostream>
-#include <sstream>
 #include <memory>
 
 #include <fmt/format.h>
 #include <fmt/printf.h>
 
 // basic logger
-
-// for general string formatting use fmt directly like so
-//  std::string fmt::format("...", ...)
-// doesn't support printf-like syntax
-
-// or preferably with printf-like syntax
-//  std::string format("%s", "hello");
 
 struct logger_base final
 {
@@ -61,43 +53,43 @@ private:
     template<typename... Arguments>
     inline void general(const std::string &message, Arguments... args)
     {
-        fmt::fprintf(std::cout, message + "\n", std::forward<Arguments>(args)...);
+        std::fprintf(stdout, "%s\n", fmt::format(message, std::forward<Arguments>(args)...).c_str());
     }
 
     template<typename... Arguments>
     inline void info(const std::string &message, Arguments... args)
     {
-        fmt::fprintf(std::cout, "INFO: " + message + "\n", std::forward<Arguments>(args)...);
+        std::fprintf(stdout, "%s\n", fmt::format("INFO: " + message, std::forward<Arguments>(args)...).c_str());
     }
 
     template<typename... Arguments>
     inline void warning(const std::string &message, Arguments... args)
     {
-        fmt::fprintf(std::cerr, "WARNING: " + message + "\n", std::forward<Arguments>(args)...);
+        std::fprintf(stderr, "%s\n", fmt::format("WARNING: " + message, std::forward<Arguments>(args)...).c_str());
     }
 
     template<typename... Arguments>
     inline void error(const std::string &message, Arguments... args)
     {
-        fmt::fprintf(std::cerr, "ERROR: " + message + "\n", std::forward<Arguments>(args)...);
+        std::fprintf(stderr, "%s\n", fmt::format("ERROR: " + message, std::forward<Arguments>(args)...).c_str());
     }
 
     template<typename... Arguments>
     inline void fatal(const std::string &message, Arguments... args)
     {
-        fmt::fprintf(std::cerr, "FATAL: " + message + "\n", std::forward<Arguments>(args)...);
+        std::fprintf(stderr, "%s\n", fmt::format("FATAL: " + message, std::forward<Arguments>(args)...).c_str());
     }
 
     template<typename... Arguments>
     inline void todo(const std::string &message, Arguments... args)
     {
-        fmt::fprintf(std::cout, "TODO: " + message + "\n", std::forward<Arguments>(args)...);
+        std::fprintf(stdout, "%s\n", fmt::format("TODO: " + message, std::forward<Arguments>(args)...).c_str());
     }
 
     template<typename... Arguments>
     inline std::string format(const std::string &message, Arguments... args)
     {
-        return fmt::sprintf(message, std::forward<Arguments>(args)...);
+        return fmt::format(message, std::forward<Arguments>(args)...);
     }
 };
 
