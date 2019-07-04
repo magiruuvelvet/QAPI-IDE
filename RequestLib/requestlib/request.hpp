@@ -35,8 +35,17 @@ public:
     // set UTF-8 encoded string data
     void setRequestBody(const std::string &data);
 
-    // adds a HTTP header to the request
+    // adds a HTTP header to the request (overwrites existing headers)
     void setHeader(const std::string &header, const std::string &value);
+
+    // check if a specific HTTP header is present
+    bool hasHeader(const std::string &header) const;
+
+    // receive the value of a HTTP header
+    const std::string getHeaderValue(const std::string &header) const;
+
+    // remove a header from the request
+    void removeHeader(const std::string &header);
 
     // perform the HTTP request and receive a response object
     Response performRequest();

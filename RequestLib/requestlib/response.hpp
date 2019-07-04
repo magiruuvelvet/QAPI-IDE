@@ -2,6 +2,7 @@
 #define REQUESTLIB_RESPONSE_HPP
 
 #include <string>
+#include <list>
 #include <map>
 
 class Response final
@@ -31,6 +32,16 @@ public:
     // returns the response body
     inline const auto &body() const
     { return this->_data; }
+
+    // check if a specific HTTP header is present
+    bool hasHeader(const std::string &header) const;
+
+    // receive the values of all HTTP headers with the given name
+    const std::list<std::string> getHeaderValues(const std::string &header) const;
+
+    // receive the first occurrence of the given HTTP header
+    // calls getHeaderValues() and returns the first result if any
+    const std::string getHeaderValue(const std::string &header) const;
 
 private:
     Response();

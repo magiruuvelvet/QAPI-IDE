@@ -1,5 +1,7 @@
 #include <requestlib/request.hpp>
 
+#include <algorithm>
+
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #define CPPHTTPLIB_ZLIB_SUPPORT
 #include <httplib.h>
@@ -86,7 +88,38 @@ void Request::setRequestBody(const std::string &data)
 
 void Request::setHeader(const std::string &header, const std::string &value)
 {
-    this->_headers.insert(std::pair<std::string, std::string>(header, value));
+    std::string copy = header;
+    std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
+    this->_headers.insert(std::pair<std::string, std::string>(copy, value));
+}
+
+bool Request::hasHeader(const std::string &header) const
+{
+    std::string copy = header;
+    std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
+    return this->_headers.count(copy) > 0;
+}
+
+const std::string Request::getHeaderValue(const std::string &header) const
+{
+    if (this->hasHeader(header))
+    {
+        std::string copy = header;
+        std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
+        return this->_headers.at(copy);
+    }
+
+    return {};
+}
+
+void Request::removeHeader(const std::string &header)
+{
+    if (this->hasHeader(header))
+    {
+        std::string copy = header;
+        std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
+        this->_headers.erase(this->_headers.find(copy));
+    }
 }
 
 Response Request::performRequest()
@@ -150,7 +183,9 @@ Response Request::performRequest()
         std::multimap<std::string, std::string> headers;
         for (auto&& h : res->headers)
         {
-            headers.insert(h);
+            std::string copy = h.first;
+            std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
+            headers.insert(std::pair<std::string, std::string>(copy, h.second));
         }
         response.setHeaders(headers);
 
