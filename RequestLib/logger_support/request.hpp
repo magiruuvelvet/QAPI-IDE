@@ -17,8 +17,7 @@ struct fmt::formatter<Request>
     template<typename FormatContext>
     auto format(const Request &req, FormatContext &ctx)
     {
-        // TODO: should this output headers and the request body too? (terminal spam)
-        return format_to(ctx.out(), "Request{{url=\"{}\", method={}}}", req.urlString(), req.method());
+        return format_to(ctx.out(), "Request{{url=\"{}\", method={}, headers={}}}", req.urlString(), req.method(), req.headers());
     }
 };
 

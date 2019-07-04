@@ -17,8 +17,10 @@ struct fmt::formatter<Response>
     template<typename FormatContext>
     auto format(const Response &res, FormatContext &ctx)
     {
-        // TODO: should this output headers and the response body too? (terminal spam)
-        return format_to(ctx.out(), "Response{{status={}, version={}}}", res.status(), res.version());
+        return format_to(ctx.out(), "Response{{status={}, version={}, headers={}}}",
+                         res.status(),
+                         res.version().empty() ? "(none)" : res.version(),
+                         res.headers());
     }
 };
 
