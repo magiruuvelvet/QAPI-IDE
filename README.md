@@ -40,3 +40,8 @@ Additional build requirements are:
 
  - JSON
  - (maybe?) XML
+
+## Unit Tests
+
+Unit tests are built by default for now. Run them with the arguments `--reporter=info` for
+a more detailed and nice output.

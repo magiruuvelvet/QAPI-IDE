@@ -1,17 +1,20 @@
 #include <iostream>
-#include <cstdlib>
 
-#include <logger/log.hpp>
+#define UNIT_TESTING
 
-#include "logger-test.hpp"
-#include "requestlib-tests.hpp"
+#include <bandit/bandit.h>
 
-// TODO: write real unit tests with assertions
+using namespace snowhouse;
+using namespace bandit;
 
-int main()
+// Logger tests
+#include "logger/fmt-test.hpp"
+
+// RequestLib tests
+#include "request-lib/basic-request.hpp"
+#include "request-lib/url.hpp"
+
+int main(int argc, char **argv)
 {
-    logger_test();
-    requestlib_tests();
-
-    return 0;
+    return bandit::run(argc, argv);
 }
