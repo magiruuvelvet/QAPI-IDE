@@ -74,6 +74,11 @@ Request::~Request()
 {
 }
 
+const std::string Request::url() const
+{
+    return this->_url->str();
+}
+
 void Request::setRequestBody(const std::string &data)
 {
     this->_data = data;

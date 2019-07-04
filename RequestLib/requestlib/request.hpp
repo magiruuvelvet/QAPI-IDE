@@ -19,11 +19,12 @@ public:
     Request(const std::string &url, RequestMethod method = RequestMethod::GET, const std::string &custom_method = {});
     ~Request();
 
+    // returns the original input URL
     inline const auto &urlString() const
     { return this->_full_url; }
 
-    inline const auto *url() const
-    { return this->_url.get(); }
+    // returns the parsed URL
+    const std::string url() const;
 
     inline const auto &method() const
     { return this->_method; }
