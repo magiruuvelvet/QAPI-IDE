@@ -46,28 +46,28 @@ Request::Request(const std::string &url, RequestMethod method, const std::string
         this->_url->setPath("/");
     }
 
-#ifdef DEBUG_BUILD
-    LOG_INFO("{}, {}", *this, *this->_url);
-    LOG_INFO(
-              "Scheme:     {}\n"
-        "      Userinfo:   {}\n"
-        "      Host:       {}\n"
-        "      Port:       {}\n"
-        "      Path:       {}\n"
-        "      Params:     {}\n"
-        "      Query:      {}\n"
-        "      Fragment:   {}\n",
-        this->_url->scheme(),
-        this->_url->userinfo(),
-        this->_url->host(),
-        this->_url->port(),
-        this->_url->path(),
-        this->_url->params(),
-        this->_url->query(),
-        this->_url->fragment(),
-        this->_url->str()
-    );
-#endif
+//#ifdef DEBUG_BUILD
+//    LOG_INFO("{}, {}", *this, *this->_url);
+//    LOG_INFO(
+//              "Scheme:     {}\n"
+//        "      Userinfo:   {}\n"
+//        "      Host:       {}\n"
+//        "      Port:       {}\n"
+//        "      Path:       {}\n"
+//        "      Params:     {}\n"
+//        "      Query:      {}\n"
+//        "      Fragment:   {}\n",
+//        this->_url->scheme(),
+//        this->_url->userinfo(),
+//        this->_url->host(),
+//        this->_url->port(),
+//        this->_url->path(),
+//        this->_url->params(),
+//        this->_url->query(),
+//        this->_url->fragment(),
+//        this->_url->str()
+//    );
+//#endif
 }
 
 Request::~Request()
