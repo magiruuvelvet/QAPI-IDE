@@ -13,6 +13,7 @@ using namespace bandit;
 // RequestLib tests
 #include "request-lib/basic-request.hpp"
 #include "request-lib/url.hpp"
+#include "request-lib/headers.hpp"
 
 int main(int argc, char **argv)
 {

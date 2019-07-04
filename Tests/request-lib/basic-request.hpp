@@ -12,6 +12,8 @@ go_bandit([]{
             const auto res = req.performRequest();
             AssertThat(res.successful(), Equals(true));
             AssertThat(res.status(), Equals(200));
+            AssertThat(res.hasHeader("Content-Type"), Equals(true));
+            AssertThat(res.getHeaderValue("Content-Type"), Equals("text/html; charset=utf-8"));
         });
 
         it("[basic-request HTTPS]", [&]{
@@ -19,6 +21,8 @@ go_bandit([]{
             const auto res = req.performRequest();
             AssertThat(res.successful(), Equals(true));
             AssertThat(res.status(), Equals(200));
+            AssertThat(res.hasHeader("Content-Type"), Equals(true));
+            AssertThat(res.getHeaderValue("Content-Type"), Equals("text/html; charset=utf-8"));
         });
     });
 });
