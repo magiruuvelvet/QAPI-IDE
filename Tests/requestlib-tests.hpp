@@ -1,12 +1,18 @@
 #include <requestlib/request.hpp>
 
+#include <logger/log.hpp>
+#include <logger_support/request.hpp>
+#include <logger_support/response.hpp>
+
 void requestlib_tests()
 {
     Request req("http://127.0.0.1");
+    req.setHeader("X-Test", "test");
+    LOG("Test Request: {}", req);
     auto res = req.performRequest();
-    std::cout << "Response: " << res.status() << std::endl;
+    LOG("Test Response: {}", res);
 
     Request req2("https://localhost");
     res = req2.performRequest();
-    std::cout << "Response: " << res.status() << std::endl;
+    LOG("Test Response: {}", res);
 }

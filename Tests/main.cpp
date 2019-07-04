@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstdlib>
 
+#include <logger/log.hpp>
+
 #include "logger-test.hpp"
 #include "requestlib-tests.hpp"
 
