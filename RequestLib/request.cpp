@@ -19,7 +19,7 @@ Request::Request(const std::string &url, RequestMethod method, const std::string
     try {
         this->_url = std::make_shared<Url::Url>(url);
     } catch (Url::UrlParseException &e) {
-        LOG_ERROR("Request: Url::UrlParseException: %s", e.what());
+        LOG_ERROR("Request: Url::UrlParseException: {}", e.what());
         this->_url = nullptr;
         return;
     }
@@ -41,16 +41,16 @@ Request::Request(const std::string &url, RequestMethod method, const std::string
 
 #ifdef DEBUG_BUILD
     LOG_INFO(
-        "Request[URL]: %s\n"
-        "  Scheme:      %s\n"
-        "  Userinfo:    %s\n"
-        "  Host:        %s\n"
-        "  Port:        %i\n"
-        "  Path:        %s\n"
-        "  Params:      %s\n"
-        "  Query:       %s\n"
-        "  Fragment:    %s\n"
-        "  Raw Str:     %s",
+        "Request[URL]: {}\n"
+        "  Scheme:     {}\n"
+        "  Userinfo:   {}\n"
+        "  Host:       {}\n"
+        "  Port:       {}\n"
+        "  Path:       {}\n"
+        "  Params:     {}\n"
+        "  Query:      {}\n"
+        "  Fragment:   {}\n"
+        "  Raw Str:    {}",
         url,
         this->_url->scheme(),
         this->_url->userinfo(),
