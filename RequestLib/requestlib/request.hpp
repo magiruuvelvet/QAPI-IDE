@@ -28,6 +28,9 @@ public:
     inline const auto &method() const
     { return this->_method; }
 
+    inline const auto &headers() const
+    { return this->_headers; }
+
     // set UTF-8 encoded string data
     void setRequestBody(const std::string &data);
 
