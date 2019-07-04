@@ -7,6 +7,9 @@
 #include <fmt/format.h>
 #include <fmt/printf.h>
 
+// common data types
+#include <logger/support/map.hpp>
+
 // basic logger
 
 struct logger_base final
