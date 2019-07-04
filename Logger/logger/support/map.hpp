@@ -17,7 +17,7 @@ struct fmt::formatter<map_fmt>                                                  
     }                                                                                       \
                                                                                             \
     template<typename FormatContext>                                                        \
-    auto format(const map_fmt &map, FormatContext &ctx)          \
+    auto format(const map_fmt &map, FormatContext &ctx)                                     \
     {                                                                                       \
         if (map.size() == 0)                                                                \
         {                                                                                   \
