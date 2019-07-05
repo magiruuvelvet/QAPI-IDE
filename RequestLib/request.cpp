@@ -173,7 +173,7 @@ const Response Request::performRequest()
     // set request body
     req.body = this->_data;
 
-    auto res = std::make_shared<httplib::Response>();
+    const auto res = std::make_shared<httplib::Response>();
 
     if (c.send(req, *res))
     {
