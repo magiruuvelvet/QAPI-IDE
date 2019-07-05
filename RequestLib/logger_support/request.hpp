@@ -17,7 +17,8 @@ struct fmt::formatter<Request>
     template<typename FormatContext>
     auto format(const Request &req, FormatContext &ctx)
     {
-        return format_to(ctx.out(), "Request{{url=\"{}\", method={}, headers={}}}", req.urlString(), req.method(), req.headers());
+        return format_to(ctx.out(), "Request{{url=\"{}\", parsedUrl=\"{}\" method={}, headers={}}}",
+                         req.urlString(), req.url(), req.method(), req.headers());
     }
 };
 
