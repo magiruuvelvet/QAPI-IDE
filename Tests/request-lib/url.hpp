@@ -1,13 +1,9 @@
 #include <requestlib/request.hpp>
 
 #include <bandit/bandit.h>
-//#include <bandit/assertion_exception.h>
 
 using namespace snowhouse;
 using namespace bandit;
-
-#include <logger/log.hpp>
-#include <logger_support/request.hpp>
 
 go_bandit([]{
     describe("RequestLib", []{
