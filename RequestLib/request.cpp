@@ -86,6 +86,11 @@ void Request::setRequestBody(const std::string &data)
     this->_data = data;
 }
 
+void Request::appendToRequestBody(const std::string &data)
+{
+    this->_data.append(data);
+}
+
 void Request::setHeader(const std::string &header, const std::string &value)
 {
     std::string copy = header;

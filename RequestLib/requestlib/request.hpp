@@ -34,12 +34,19 @@ public:
     inline const auto &headers() const
     { return this->_headers; }
 
+    // returns the current request body
+    inline const auto &body() const
+    { return this->_data; }
+
     // whenever to verify the TLS certificate or not
     // defaults to false for local HTTPS development (promotion: mkcert on GitHub)
     void verifyCertificate(bool enabled);
 
     // set UTF-8 encoded string data
     void setRequestBody(const std::string &data);
+
+    // appends UTF-8 encoded string data to the body instead of overwriting it
+    void appendToRequestBody(const std::string &data);
 
     // adds a HTTP header to the request (overwrites existing headers)
     void setHeader(const std::string &header, const std::string &value);
