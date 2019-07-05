@@ -8,10 +8,6 @@
 
 #include <url.h>
 
-#include <logger/log.hpp>
-#include <logger_support/request.hpp>
-#include <logger_support/url.hpp>
-
 Request::Request(const std::string &url, RequestMethod method, const std::string &custom_method)
     : _full_url(url)
 {
@@ -22,9 +18,11 @@ Request::Request(const std::string &url, RequestMethod method, const std::string
     try {
         this->_url = std::make_shared<Url::Url>(url);
     } catch (Url::UrlParseException &e) {
-        LOG_ERROR("Request: Url::UrlParseException: {}", e.what());
         this->_url = nullptr;
-        return;
+        // throw custom exception with same name and error message
+        // the url lib is not visible in the other modules of the application
+        // and the public interface to avoid cluttering the global scope
+        throw UrlParseException(e.what());
     }
 
     // fixup some derps from the url parsing library
@@ -78,7 +76,7 @@ Request::~Request()
 
 const std::string Request::url() const
 {
-    return this->_url->str();
+    return this->_url ? this->_url->str() : "";
 }
 
 void Request::setRequestBody(const std::string &data)
@@ -202,6 +200,5 @@ const Response Request::performRequest()
     }
 
     // create invalid empty response
-    LOG_ERROR("Request: server request failed!");
     return Response();
 }

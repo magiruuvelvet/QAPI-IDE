@@ -8,6 +8,8 @@
 #include <requestlib/response.hpp>
 #include <requestlib/methods.hpp>
 
+#include <requestlib/exceptions.hpp>
+
 // forward declare url library
 namespace Url {
     struct Url;
