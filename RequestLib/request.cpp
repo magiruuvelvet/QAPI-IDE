@@ -122,11 +122,12 @@ void Request::removeHeader(const std::string &header)
     }
 }
 
-Response Request::performRequest()
+const Response Request::performRequest()
 {
     struct ClientWrapper {
-        ClientWrapper(const Url::Url *url)
-            : url(url)
+        ClientWrapper(const Url::Url *url, bool verifyCertificate)
+            : url(url),
+              verifyCertificate(verifyCertificate)
         {
         }
 
@@ -136,7 +137,7 @@ Response Request::performRequest()
             if (this->url->scheme() == "https")
             {
                 httplib::SSLClient client(this->url->host().c_str(), this->url->port());
-                // TODO: certificate verify support toggle
+                client.enable_server_certificate_verification(this->verifyCertificate);
                 return client.send(req, res);
             }
             else
@@ -148,10 +149,11 @@ Response Request::performRequest()
 
     private:
         const Url::Url *url;
+        bool verifyCertificate = false;
     };
 
     // create http client instance with parsed URL
-    ClientWrapper c(this->_url.get());
+    ClientWrapper c(this->_url.get(), this->_verifyCertificate);
 
     // compose http request
     httplib::Request req;

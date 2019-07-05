@@ -26,11 +26,17 @@ public:
     // returns the parsed URL
     const std::string url() const;
 
+    // returns the request method as string
     inline const auto &method() const
     { return this->_method; }
 
+    // returns a string map of all currently set headers
     inline const auto &headers() const
     { return this->_headers; }
+
+    // whenever to verify the TLS certificate or not
+    // defaults to false for local HTTPS development (promotion: mkcert on GitHub)
+    void verifyCertificate(bool enabled);
 
     // set UTF-8 encoded string data
     void setRequestBody(const std::string &data);
@@ -48,11 +54,12 @@ public:
     void removeHeader(const std::string &header);
 
     // perform the HTTP request and receive a response object
-    Response performRequest();
+    const Response performRequest();
 
 private:
     std::string _full_url;
     std::string _method;
+    bool _verifyCertificate = false;
 
     std::shared_ptr<Url::Url> _url;
     std::map<std::string, std::string> _headers;
