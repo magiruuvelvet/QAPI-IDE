@@ -83,12 +83,13 @@ Request::Request(const std::string &url, const std::string &method)
 
 Request::Request(const std::string &url, const std::string &method,
                  const std::map<std::string, std::string> &headers, const std::string &data,
-                 std::uint8_t current_redirect_count)
+                 uint16_t current_redirect_count, uint16_t max_redirect_attempts)
     : Request(url, method)
 {
     // this is a private constructor to recursively follow redirects
     this->_followRedirects = true;
     this->_redirect_count = current_redirect_count;
+    this->_max_redirect_attempts = max_redirect_attempts;
 
     // transfer headers and body
     this->_headers = headers;
@@ -112,6 +113,11 @@ void Request::verifyCertificate(bool enabled)
 void Request::followRedirects(bool enabled)
 {
     this->_followRedirects = enabled;
+}
+
+void Request::setMaxRedirectAttempts(std::uint16_t attempts)
+{
+    this->_max_redirect_attempts = attempts;
 }
 
 void Request::setRequestBody(const std::string &data)
@@ -253,9 +259,8 @@ const Response Request::performRequest()
                 }
 
                 // check redirect count
-                if (this->_redirect_count >= 0xFF)
+                if (this->_redirect_count >= this->_max_redirect_attempts)
                 {
-                    // TODO: make redirect attempts configurable instead of hardcoded
                     throw TooManyRedirects("reached maximum redirect attempts");
                 }
 
@@ -264,7 +269,10 @@ const Response Request::performRequest()
 
                 // recursively perform requests until the result is no longer 3xx (redirect)
                 // or too many attempts where performed
-                return Request(new_url, this->_method, this->_headers, this->_data, this->_redirect_count).performRequest();
+                return Request(new_url, this->_method,
+                               this->_headers, this->_data,
+                               this->_redirect_count, this->_max_redirect_attempts)
+                        .performRequest();
             }
         }
 

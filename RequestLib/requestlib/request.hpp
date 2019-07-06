@@ -49,6 +49,10 @@ public:
     // defaults to false
     void followRedirects(bool enabled);
 
+    // sets the maximum redirect attempts before throwing a TooManyRedirects exception
+    // defaults to 10 attempts
+    void setMaxRedirectAttempts(std::uint16_t attempts);
+
     // set UTF-8 encoded string data
     void setRequestBody(const std::string &data);
 
@@ -77,7 +81,7 @@ private:
 
     Request(const std::string &url, const std::string &method,
             const std::map<std::string, std::string> &headers, const std::string &data,
-            std::uint8_t current_redirect_count);
+            std::uint16_t current_redirect_count, std::uint16_t max_redirect_attempts);
 
     std::string _full_url;
     std::string _method;
@@ -88,7 +92,8 @@ private:
     std::map<std::string, std::string> _headers;
     std::string _data;
 
-    std::uint8_t _redirect_count = 0;
+    std::uint16_t _redirect_count = 0;
+    std::uint16_t _max_redirect_attempts = 10;
 };
 
 #endif // REQUESTLIB_REQUEST_HPP

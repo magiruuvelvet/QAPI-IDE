@@ -18,7 +18,7 @@ public:
     { return this->_success; }
 
     // returns the HTTP status code
-    inline auto status() const
+    inline const auto &status() const
     { return this->_status; }
 
     // returns the HTTP version
