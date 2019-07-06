@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <string>
+#include <string_view>
 #include <map>
 
 #include <fmt/format.h>
@@ -49,10 +50,33 @@ private:
 
     using fp_t = decltype(stdout);
 
-    // FIXME: this should be compile-time constexpr and not run time!
-    static const std::map<log_channel, std::string> log_channels;
+    template<log_channel> struct log_channel_config;
 
-    static const std::string fmt_log_channel(log_channel channel, const std::string &fmt);
+#define DECLARE_LOG_CHANNEL(channel)                                       \
+    template<> struct log_channel_config<log_channel::channel> {           \
+        static const fp_t fp;                                              \
+        static constexpr const std::string_view name = #channel;           \
+        static constexpr const log_channel channel = log_channel::channel; \
+    }
+
+    template<> struct log_channel_config<log_channel::NONE>
+    {
+        static const fp_t fp;
+        static constexpr const std::string_view name = "";
+        static constexpr const log_channel channel = log_channel::NONE;
+    };
+
+    DECLARE_LOG_CHANNEL(INFO);
+    DECLARE_LOG_CHANNEL(WARNING);
+    DECLARE_LOG_CHANNEL(ERROR);
+    DECLARE_LOG_CHANNEL(FATAL);
+    DECLARE_LOG_CHANNEL(TODO);
+
+    // FIXME: this should be compile-time constexpr and not run time!
+    static const std::map<const log_channel, const std::string_view> log_channels;
+
+    static const std::string fmt_log_channel(log_channel channel, const std::string_view &fmt);
+    static constexpr const std::string_view print_fmt = "{}: ";
 
     // default terminal printing of log messages
     // channel format: "CHANNEL: message"
@@ -60,50 +84,30 @@ private:
     template<typename... Arguments>
     constexpr inline static void print(const std::string &message, log_channel channel, fp_t fp, Arguments... args)
     {
-        std::fprintf(fp, "%s\n", fmt::format(fmt_log_channel(channel, "{}: ") + message, std::forward<Arguments>(args)...).c_str());
+        std::fprintf(fp, "%s\n", (fmt_log_channel(channel, print_fmt) + fmt::format(message, std::forward<Arguments>(args)...)).c_str());
     }
 
-    template<typename... Arguments>
-    constexpr inline static void general(const std::string &message, Arguments... args)
-    {
-        print(message, log_channel::NONE, stdout, args...);
+#define IMPLEMENT_LOG_CHANNEL_PRINT(channel, func_name)                                              \
+    template<typename... Arguments>                                                                  \
+    constexpr inline static void func_name(const std::string &message, Arguments... args) {          \
+        print(message, log_channel::channel, log_channel_config<log_channel::channel>::fp, args...); \
     }
 
-    template<typename... Arguments>
-    constexpr inline static void info(const std::string &message, Arguments... args)
-    {
-        print(message, log_channel::INFO, stdout, args...);
-    }
-
-    template<typename... Arguments>
-    constexpr inline static void warning(const std::string &message, Arguments... args)
-    {
-        print(message, log_channel::WARNING, stderr, args...);
-    }
-
-    template<typename... Arguments>
-    constexpr inline static void error(const std::string &message, Arguments... args)
-    {
-        print(message, log_channel::ERROR, stderr, args...);
-    }
-
-    template<typename... Arguments>
-    constexpr inline static void fatal(const std::string &message, Arguments... args)
-    {
-        print(message, log_channel::FATAL, stderr, args...);
-    }
-
-    template<typename... Arguments>
-    constexpr inline static void todo(const std::string &message, Arguments... args)
-    {
-        print(message, log_channel::TODO, stdout, args...);
-    }
+    IMPLEMENT_LOG_CHANNEL_PRINT(NONE,     general)
+    IMPLEMENT_LOG_CHANNEL_PRINT(INFO,     info)
+    IMPLEMENT_LOG_CHANNEL_PRINT(WARNING,  warning)
+    IMPLEMENT_LOG_CHANNEL_PRINT(ERROR,    error)
+    IMPLEMENT_LOG_CHANNEL_PRINT(FATAL,    fatal)
+    IMPLEMENT_LOG_CHANNEL_PRINT(TODO,     todo)
 
     template<typename... Arguments>
     inline static const std::string format(const std::string &message, Arguments... args)
     {
         return fmt::format(message, std::forward<Arguments>(args)...);
     }
+
+#undef DECLARE_LOG_CHANNEL
+#undef IMPLEMENT_LOG_CHANNEL_PRINT
 };
 
 
