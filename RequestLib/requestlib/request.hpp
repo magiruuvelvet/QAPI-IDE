@@ -19,6 +19,7 @@ class Request final
 {
 public:
     Request(const std::string &url, RequestMethod method = RequestMethod::GET, const std::string &custom_method = {});
+    Request(const std::string &url, const std::string &method);
     ~Request();
 
     // returns the original input URL
@@ -44,6 +45,10 @@ public:
     // defaults to false for local HTTPS development (promotion: mkcert on GitHub)
     void verifyCertificate(bool enabled);
 
+    // whenever to follow HTTP redirects (Location header)
+    // defaults to false
+    void followRedirects(bool enabled);
+
     // set UTF-8 encoded string data
     void setRequestBody(const std::string &data);
 
@@ -66,13 +71,20 @@ public:
     const Response performRequest();
 
 private:
+    Request(const std::string &url, const std::string &method,
+            const std::map<std::string, std::string> &headers, const std::string &data,
+            std::uint8_t current_redirect_count);
+
     std::string _full_url;
     std::string _method;
     bool _verifyCertificate = false;
+    bool _followRedirects = false;
 
     std::shared_ptr<Url::Url> _url;
     std::map<std::string, std::string> _headers;
     std::string _data;
+
+    std::uint8_t _redirect_count = 0;
 };
 
 #endif // REQUESTLIB_REQUEST_HPP

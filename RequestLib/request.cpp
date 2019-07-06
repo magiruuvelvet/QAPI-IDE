@@ -70,6 +70,25 @@ Request::Request(const std::string &url, RequestMethod method, const std::string
 //#endif
 }
 
+Request::Request(const std::string &url, const std::string &method)
+    : Request(url, RequestMethod::CUSTOM, method)
+{
+}
+
+Request::Request(const std::string &url, const std::string &method,
+                 const std::map<std::string, std::string> &headers, const std::string &data,
+                 std::uint8_t current_redirect_count)
+    : Request(url, method)
+{
+    // this is a private constructor to recursively follow redirects
+    this->_followRedirects = true;
+    this->_redirect_count = current_redirect_count;
+
+    // transfer headers and body
+    this->_headers = headers;
+    this->_data = data;
+}
+
 Request::~Request()
 {
 }
@@ -77,6 +96,16 @@ Request::~Request()
 const std::string Request::url() const
 {
     return this->_url ? this->_url->str() : "";
+}
+
+void Request::verifyCertificate(bool enabled)
+{
+    this->_verifyCertificate = enabled;
+}
+
+void Request::followRedirects(bool enabled)
+{
+    this->_followRedirects = enabled;
 }
 
 void Request::setRequestBody(const std::string &data)
@@ -127,6 +156,12 @@ void Request::removeHeader(const std::string &header)
 
 const Response Request::performRequest()
 {
+    // return invalid response on empty url
+    if (this->_full_url.empty())
+    {
+        return Response();
+    }
+
     struct ClientWrapper {
         ClientWrapper(const Url::Url *url, bool verifyCertificate)
             : url(url),
@@ -180,6 +215,53 @@ const Response Request::performRequest()
 
     if (c.send(req, *res))
     {
+        // check if to follow redirects
+        if (this->_followRedirects)
+        {
+            if (res->status >= 301 && res->status <= 303)
+            {
+                std::string new_url;
+
+                if (res->has_header("Location"))
+                {
+                    const auto location = res->get_header_value("Location");
+
+                    // location header is empty or doesn't exist
+                    if (location.empty())
+                    {
+                        throw InvalidRedirect("got redirect status, but no location header");
+                    }
+
+                    if (location.rfind("http://", 0) == 0 || location.rfind("https://", 0) == 0)
+                    {
+                        // new url becomes absolute
+                        new_url = location;
+                    }
+                    else
+                    {
+                        // set path of current url
+                        auto tmp_url = *this->_url.get();
+                        tmp_url.setPath(location);
+                        new_url = tmp_url.str();
+                    }
+                }
+
+                // check redirect count
+                if (this->_redirect_count >= 0xFF)
+                {
+                    // TODO: make redirect attempts configurable instead of hardcoded
+                    throw TooManyRedirects("reached maximum redirect attempts");
+                }
+
+                // increase redirect attempts
+                this->_redirect_count++;
+
+                // recursively perform requests until the result is no longer 3xx (redirect)
+                // or too many attempts where performed
+                return Request(new_url, this->_method, this->_headers, this->_data, this->_redirect_count).performRequest();
+            }
+        }
+
         // create response object
         Response response;
         response.setSuccess(true);
