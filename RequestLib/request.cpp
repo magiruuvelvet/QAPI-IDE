@@ -11,14 +11,14 @@
 Request::Request(const std::string &url, RequestMethod method, const std::string &custom_method)
     : _full_url(url)
 {
+    // set request method as string
+    this->_method = RequestMethodString(method, custom_method);
+
     // don't do anything on empty url
     if (url.empty())
     {
         return;
     }
-
-    // set request method as string
-    this->_method = RequestMethodString(method, custom_method);
 
     // parse url
     try {
