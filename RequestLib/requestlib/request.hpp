@@ -10,7 +10,7 @@
 
 #include <requestlib/exceptions.hpp>
 
-// forward declare url library
+// forward declare url library (private)
 namespace Url {
     struct Url;
 }

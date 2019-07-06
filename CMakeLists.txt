@@ -15,8 +15,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}"
 
 # Set C++ standard macro
 include(SetCppStandard)
-include(include_fmt_lib)
-include(include_enum_lib)
 
 # Folder where generated files go
 set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/Generated)
@@ -66,31 +64,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 string(ASCII 27 Esc)
 
-#
-# 3rd party libraries
-#
-
-# fmt
-message(STATUS "${Esc}[1mConfiguring target fmt...${Esc}[m")
-add_subdirectory("${PROJECT_SOURCE_DIR}/Libs/fmt")
-
-# url-cpp
-message(STATUS "${Esc}[1mConfiguring target url-cpp...${Esc}[m")
-file(GLOB_RECURSE SourceList_UrlCpp
-    "${PROJECT_SOURCE_DIR}/Libs/url-cpp/src/*.cpp"
-    "${PROJECT_SOURCE_DIR}/Libs/url-cpp/include/*.h"
-)
-add_library(UrlCpp STATIC ${SourceList_UrlCpp})
-target_include_directories(UrlCpp PRIVATE "${PROJECT_SOURCE_DIR}/Libs/url-cpp/include")
-SetCppStandard(UrlCpp 17)
-set_target_properties(UrlCpp PROPERTIES PREFIX "")
-set_target_properties(UrlCpp PROPERTIES OUTPUT_NAME "UrlCpp")
-
-
-#
 # Targets
-#
-
 add_subdirectory(Logger)
 add_subdirectory(RequestLib)
 add_subdirectory(JsonViewer)

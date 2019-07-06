@@ -14,14 +14,25 @@ find_package(OpenSSL REQUIRED)
 # find zlib
 find_package(ZLIB REQUIRED)
 
+# url-cpp
+message(STATUS "${Esc}[1m > Configuring sub target url-cpp...${Esc}[m")
+file(GLOB_RECURSE SourceList_UrlCpp
+    "${PROJECT_SOURCE_DIR}/Libs/url-cpp/src/*.cpp"
+    "${PROJECT_SOURCE_DIR}/Libs/url-cpp/include/*.h"
+)
+add_library(UrlCpp STATIC ${SourceList_UrlCpp})
+target_include_directories(UrlCpp PRIVATE "${PROJECT_SOURCE_DIR}/Libs/url-cpp/include")
+SetCppStandard(UrlCpp 17)
+set_target_properties(UrlCpp PROPERTIES PREFIX "")
+set_target_properties(UrlCpp PROPERTIES OUTPUT_NAME "UrlCpp")
+message(STATUS "${Esc}[1m > Configured sub target url-cpp.${Esc}[m")
+
+
 add_library(RequestLib STATIC ${SourceList_RequestLib})
 
 SetCppStandard(RequestLib 17)
 set_target_properties(RequestLib PROPERTIES PREFIX "")
 set_target_properties(RequestLib PROPERTIES OUTPUT_NAME "RequestLib")
-
-include_fmt_lib(RequestLib)
-include_enum_lib(RequestLib)
 
 target_include_directories(RequestLib PRIVATE "${PROJECT_SOURCE_DIR}/RequestLib")
 target_include_directories(RequestLib PRIVATE "${PROJECT_SOURCE_DIR}/Libs/cpp-httplib")
@@ -41,3 +52,5 @@ PRIVATE
     UrlCpp
     fmt
 )
+
+message(STATUS "${Esc}[1mConfigured target RequestLib.${Esc}[m")

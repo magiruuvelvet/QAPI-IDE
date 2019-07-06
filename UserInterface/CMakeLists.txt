@@ -36,9 +36,6 @@ SetCppStandard(UserInterface 17)
 set_target_properties(UserInterface PROPERTIES PREFIX "")
 set_target_properties(UserInterface PROPERTIES OUTPUT_NAME "qapi-ide")
 
-include_fmt_lib(UserInterface)
-include_enum_lib(UserInterface)
-
 target_link_libraries(UserInterface
 PUBLIC
     Qt5::Core
@@ -55,3 +52,5 @@ target_include_directories(UserInterface PRIVATE "${PROJECT_SOURCE_DIR}/UserInte
 target_include_directories(UserInterface PRIVATE "${REQUESTLIB_INCLUDE_DIR}")
 target_include_directories(UserInterface PRIVATE "${JSONVIEWER_INCLUDE_DIR}")
 target_include_directories(UserInterface PRIVATE "${LOGGER_INCLUDE_DIR}")
+
+message(STATUS "${Esc}[1mConfigured target UserInterface.${Esc}[m")
