@@ -46,6 +46,10 @@ public:
 private:
     Response();
 
+    // disable assignment
+    void operator=(const Response&) = delete;
+    void operator=(Response&) = delete;
+
     void setSuccess(bool);
     void setStatus(int);
     void setVersion(const std::string &version);

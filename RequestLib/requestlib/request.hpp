@@ -71,6 +71,10 @@ public:
     const Response performRequest();
 
 private:
+    // disable assignment
+    void operator=(const Request&) = delete;
+    void operator=(Request&) = delete;
+
     Request(const std::string &url, const std::string &method,
             const std::map<std::string, std::string> &headers, const std::string &data,
             std::uint8_t current_redirect_count);
