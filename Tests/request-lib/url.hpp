@@ -21,5 +21,10 @@ go_bandit([]{
             // validate that the correct exception is thrown on URL parse error
             AssertThrows(UrlParseException, Request("http://localhost:abc/path"));
         });
+
+        it("[URL empty]", [&]{
+            Request req("");
+            AssertThat(req.url(), Equals(""));
+        });
     });
 });

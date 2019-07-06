@@ -12,6 +12,7 @@ using namespace bandit;
 
 // RequestLib tests
 #include "request-lib/basic-request.hpp"
+#include "request-lib/redirect.hpp"
 #include "request-lib/url.hpp"
 #include "request-lib/headers.hpp"
 
