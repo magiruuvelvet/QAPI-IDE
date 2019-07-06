@@ -19,6 +19,8 @@
 // basic logger
 struct logger_base
 {
+    friend struct logger;
+
 private:
     logger_base() = delete;
 
@@ -119,6 +121,12 @@ struct logger final : private logger_base
 public:
     static constexpr const auto &system_name() { return logger_os_details::system_name; }
     static constexpr const auto &system_version() { return logger_os_details::system_version; }
+
+    // returns the operating system name and version as string
+    inline static const std::string get_system_details()
+    {
+        return logger_base::format("{} {}", system_name(), system_version());
+    }
 
 private:
     logger() = delete;
