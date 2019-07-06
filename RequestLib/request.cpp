@@ -83,7 +83,7 @@ Request::Request(const std::string &url, const std::string &method)
 
 Request::Request(const std::string &url, const std::string &method,
                  const std::map<std::string, std::string> &headers, const std::string &data,
-                 uint16_t current_redirect_count, uint16_t max_redirect_attempts)
+                 std::uint16_t current_redirect_count, std::uint16_t max_redirect_attempts)
     : Request(url, method)
 {
     // this is a private constructor to recursively follow redirects
