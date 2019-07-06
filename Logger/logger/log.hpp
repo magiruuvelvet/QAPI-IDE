@@ -9,15 +9,19 @@
 #include <fmt/format.h>
 #include <fmt/printf.h>
 
+#include <logger/version.hpp>
+
 // common data types
 #include <logger/support/map.hpp>
 
 // TODO: support for files and optimal terminal formatting
 
 // basic logger
-struct logger_base final
+struct logger_base
 {
 private:
+    logger_base() = delete;
+
     template<typename... Arguments>
     friend void LOG(Arguments... args);
 
@@ -108,6 +112,16 @@ private:
 
 #undef DECLARE_LOG_CHANNEL
 #undef IMPLEMENT_LOG_CHANNEL_PRINT
+};
+
+struct logger final : private logger_base
+{
+public:
+    static constexpr const auto &system_name() { return logger_os_details::system_name; }
+    static constexpr const auto &system_version() { return logger_os_details::system_version; }
+
+private:
+    logger() = delete;
 };
 
 

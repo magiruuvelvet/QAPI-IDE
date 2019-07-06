@@ -26,6 +26,9 @@ set_target_properties(Logger PROPERTIES OUTPUT_NAME "Logger")
 target_include_directories(Logger PRIVATE "${PROJECT_SOURCE_DIR}/Logger")
 set(LOGGER_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/Logger" PARENT_SCOPE)
 
+# operating system details
+configure_file("logger/version.hpp.in" "${GENERATED_DIR}/logger/version.hpp")
+
 target_link_libraries(Logger PRIVATE fmt)
 
 message(STATUS "${Esc}[1mConfigured target Logger.${Esc}[m")

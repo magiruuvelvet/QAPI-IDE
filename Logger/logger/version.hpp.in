@@ -1,0 +1,16 @@
+#ifndef LOGGER_VERSION_HPP
+#define LOGGER_VERSION_HPP
+
+#include <string_view>
+
+struct logger_os_details final
+{
+    friend struct logger_base;
+    friend struct logger;
+
+private:
+    constexpr static const std::string_view system_name = "@CMAKE_SYSTEM_NAME@";
+    constexpr static const std::string_view system_version = "@CMAKE_SYSTEM_VERSION@";
+};
+
+#endif // LOGGER_VERSION_HPP
