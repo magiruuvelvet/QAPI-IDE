@@ -2,6 +2,8 @@
 
 #define UNIT_TESTING
 
+#include <logger/log.hpp>
+
 #include <bandit/bandit.h>
 
 using namespace snowhouse;
@@ -18,5 +20,6 @@ using namespace bandit;
 
 int main(int argc, char **argv)
 {
+    LOG("Running tests on {}...", logger::get_system_details());
     return bandit::run(argc, argv);
 }
