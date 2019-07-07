@@ -30,6 +30,9 @@ set(CMAKE_AUTORCC ON)
 add_definitions(-DQT_DEPRECATED_WARNINGS)
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060000)
 
+# disable foreach macro
+add_definitions(-DQT_NO_FOREACH)
+
 add_executable(UserInterface ${SourceList_UserInterface})
 
 SetCppStandard(UserInterface 17)
