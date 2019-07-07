@@ -34,6 +34,7 @@ versions of said dependencies.
 
 Additional build requirements are:
 
+ - C++17 compiler (clang 8+ or gcc 9+ are highly recommended)
  - cmake 3.12+
 
 ## Supported formats with pretty-printing (and syntax highlighting)
