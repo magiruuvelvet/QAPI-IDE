@@ -6,6 +6,8 @@
 #include <string_view>
 #include <map>
 
+#include <mutex>
+
 #include <fmt/format.h>
 #include <fmt/printf.h>
 
@@ -95,7 +97,7 @@ private:
 
 #define IMPLEMENT_LOG_CHANNEL_PRINT(channel, func_name)                                              \
     template<typename... Arguments>                                                                  \
-    constexpr inline static void func_name(const std::string &message, Arguments... args) {          \
+    constexpr inline static void print_##func_name(const std::string &message, Arguments... args) {          \
         print(message, log_channel::channel, log_channel_config<log_channel::channel>::fp, args...); \
     }
 
@@ -111,6 +113,9 @@ private:
     {
         return fmt::format(message, std::forward<Arguments>(args)...);
     }
+
+    // thread safety for printing to console
+    static std::mutex log_print_mutex;
 
 #undef DECLARE_LOG_CHANNEL
 #undef IMPLEMENT_LOG_CHANNEL_PRINT
@@ -137,40 +142,46 @@ private:
 // use like: LOG_WARNING("hello {}", "world");
 
 template<typename... Arguments>
-inline void LOG(Arguments... args)
-{
-    logger_base::general(std::forward<Arguments>(args)...);
-}
+void LOG(Arguments... args)
+{{
+    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    logger_base::print_general(std::forward<Arguments>(args)...);
+}}
 
 template<typename... Arguments>
-inline void LOG_INFO(Arguments... args)
-{
-    logger_base::info(std::forward<Arguments>(args)...);
-}
+void LOG_INFO(Arguments... args)
+{{
+    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    logger_base::print_info(std::forward<Arguments>(args)...);
+}}
 
 template<typename... Arguments>
-inline void LOG_WARNING(Arguments... args)
-{
-    logger_base::warning(std::forward<Arguments>(args)...);
-}
+void LOG_WARNING(Arguments... args)
+{{
+    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    logger_base::print_warning(std::forward<Arguments>(args)...);
+}}
 
 template<typename... Arguments>
-inline void LOG_ERROR(Arguments... args)
-{
-    logger_base::error(std::forward<Arguments>(args)...);
-}
+void LOG_ERROR(Arguments... args)
+{{
+    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    logger_base::print_error(std::forward<Arguments>(args)...);
+}}
 
 template<typename... Arguments>
-inline void LOG_FATAL(Arguments... args)
-{
-    logger_base::fatal(std::forward<Arguments>(args)...);
-}
+void LOG_FATAL(Arguments... args)
+{{
+    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    logger_base::print_fatal(std::forward<Arguments>(args)...);
+}}
 
 template<typename... Arguments>
-inline void LOG_TODO(Arguments... args)
-{
-    logger_base::todo(std::forward<Arguments>(args)...);
-}
+void LOG_TODO(Arguments... args)
+{{
+    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    logger_base::print_todo(std::forward<Arguments>(args)...);
+}}
 
 template<typename... Arguments>
 inline const std::string format(Arguments... args)

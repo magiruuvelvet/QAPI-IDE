@@ -9,6 +9,8 @@ const std::map<const logger_base::log_channel, const std::string_view> logger_ba
     {logger_base::log_channel::TODO,     log_channel_config<log_channel::TODO>::name},
 };
 
+std::mutex logger_base::log_print_mutex;
+
 const logger_base::fp_t logger_base::log_channel_config<logger_base::log_channel::NONE>::fp =     stdout;
 const logger_base::fp_t logger_base::log_channel_config<logger_base::log_channel::INFO>::fp =     stdout;
 const logger_base::fp_t logger_base::log_channel_config<logger_base::log_channel::WARNING>::fp =  stderr;
