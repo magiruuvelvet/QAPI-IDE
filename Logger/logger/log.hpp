@@ -144,42 +144,42 @@ private:
 template<typename... Arguments>
 void LOG(Arguments... args)
 {{
-    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    std::lock_guard lock{logger_base::log_print_mutex};
     logger_base::print_general(std::forward<Arguments>(args)...);
 }}
 
 template<typename... Arguments>
 void LOG_INFO(Arguments... args)
 {{
-    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    std::lock_guard lock{logger_base::log_print_mutex};
     logger_base::print_info(std::forward<Arguments>(args)...);
 }}
 
 template<typename... Arguments>
 void LOG_WARNING(Arguments... args)
 {{
-    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    std::lock_guard lock{logger_base::log_print_mutex};
     logger_base::print_warning(std::forward<Arguments>(args)...);
 }}
 
 template<typename... Arguments>
 void LOG_ERROR(Arguments... args)
 {{
-    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    std::lock_guard lock{logger_base::log_print_mutex};
     logger_base::print_error(std::forward<Arguments>(args)...);
 }}
 
 template<typename... Arguments>
 void LOG_FATAL(Arguments... args)
 {{
-    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    std::lock_guard lock{logger_base::log_print_mutex};
     logger_base::print_fatal(std::forward<Arguments>(args)...);
 }}
 
 template<typename... Arguments>
 void LOG_TODO(Arguments... args)
 {{
-    std::lock_guard<std::mutex> lock(logger_base::log_print_mutex);
+    std::lock_guard lock{logger_base::log_print_mutex};
     logger_base::print_todo(std::forward<Arguments>(args)...);
 }}
 
