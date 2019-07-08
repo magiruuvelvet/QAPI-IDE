@@ -170,7 +170,7 @@ private:
 
 
 #define IMPLEMENT_LOG_CHANNEL(func_name, channel)                                         \
-    template<typename... Arguments>                                                       \
+    template<typename... Arguments> __attribute__((noinline))                             \
     void func_name(const std::string &message, Arguments... args) {                       \
         using lb = logger_base;                                                           \
         std::lock_guard lock{logger_base::log_print_mutex};                               \
@@ -186,7 +186,7 @@ private:
         lb::stream(message, lb::log_channel::channel, stream,                             \
                    std::forward<Arguments>(args)...);                                     \
     }                                                                                     \
-    template<typename... Arguments>                                                       \
+    template<typename... Arguments> __attribute__((noinline))                             \
     void func_name(std::ofstream *stream, const std::string &message,                     \
                           Arguments... args) {                                            \
         using lb = logger_base;                                                           \
