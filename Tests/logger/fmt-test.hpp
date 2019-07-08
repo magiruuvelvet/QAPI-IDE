@@ -2,6 +2,8 @@
 
 #include <bandit/bandit.h>
 
+#include <sstream>
+
 using namespace snowhouse;
 using namespace bandit;
 
@@ -10,6 +12,12 @@ go_bandit([]{
         it("[fmt]", [&]{
             const auto res = format("hello {} {} {:.2f} {}", "world", 3, 3.3, 3);
             AssertThat(res, Equals("hello world 3 3.30 3"));
+        });
+
+        it("[stringstream]", [&]{
+            std::stringstream ss;
+            LOG(&ss, "123 {} 5", "test", 5);
+            AssertThat(ss.str(), Equals("123 test 5\n"));
         });
 
         // booleans should be formatted as such, and not as numbers (1, 0)

@@ -28,4 +28,9 @@ target_include_directories(Tests PRIVATE "${REQUESTLIB_INCLUDE_DIR}")
 target_include_directories(Tests PRIVATE "${JSONVIEWER_INCLUDE_DIR}")
 target_include_directories(Tests PRIVATE "${LOGGER_INCLUDE_DIR}")
 
+set(UNIT_TEST_TEMPORARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/tmp")
+file(MAKE_DIRECTORY "${UNIT_TEST_TEMPORARY_DIR}")
+target_compile_definitions(Tests PRIVATE "-DUNIT_TEST_TEMPORARY_DIR=\"${UNIT_TEST_TEMPORARY_DIR}\"")
+message(STATUS "Temporary directory for unit tests: ${UNIT_TEST_TEMPORARY_DIR}")
+
 message(STATUS "${Esc}[1mConfigured target Tests.${Esc}[m")

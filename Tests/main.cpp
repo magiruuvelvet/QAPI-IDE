@@ -11,6 +11,7 @@ using namespace bandit;
 
 // Logger tests
 #include "logger/fmt-test.hpp"
+#include "logger/file-test.hpp"
 
 // RequestLib tests
 #include "request-lib/basic-request.hpp"
