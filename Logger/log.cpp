@@ -10,6 +10,7 @@ const std::map<const logger_base::log_channel, const std::string_view> logger_ba
 };
 
 std::mutex logger_base::log_print_mutex;
+std::mutex logger_base::log_file_mutex;
 
 const logger_base::fp_t logger_base::log_channel_config<logger_base::log_channel::NONE>::fp =     stdout;
 const logger_base::fp_t logger_base::log_channel_config<logger_base::log_channel::INFO>::fp =     stdout;

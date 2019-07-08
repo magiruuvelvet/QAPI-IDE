@@ -1,9 +1,37 @@
 #ifndef LOGGER_LOG_HPP
 #define LOGGER_LOG_HPP
 
+/**
+ * Global logging functions
+ *
+ * Formatting powered by fmt (https://github.com/fmtlib/fmt)
+ *
+ * --> Print formatted message to terminal (thread safe and synchronized)
+ * LOG_channel("your formatted message", args...);
+ *
+ * --> Write formatted message to a std::ostream object (not thread safe, use one stream per thread)
+ * LOG_channel(&stringstream, "your formatted message", args...);
+ *
+ * --> Write formatted message to a std::ofstream file (thread safe and synchronized, not flushed automatically)
+ *     Call .flush() on the file stream as needed yourself.
+ * LOG_channel(&fstream, "your formatted message", args...);
+ *
+ *
+ * All logging functions append a new line (\n) character automatically.
+ *
+ *
+ * For general string formatting use the format() function with the same
+ * parameters as the terminal printing one.
+ *
+ * std::string result = format("your formatted string", args...);
+ *
+ */
+
 #include <cstdio>
 #include <string>
 #include <string_view>
+#include <ostream>
+#include <fstream>
 #include <map>
 
 #include <mutex>
@@ -16,7 +44,7 @@
 // common data types
 #include <logger/support/map.hpp>
 
-// TODO: support for files and optimal terminal formatting
+// TODO: support for optimal terminal formatting
 
 // basic logger
 struct logger_base
@@ -26,26 +54,28 @@ struct logger_base
 private:
     logger_base() = delete;
 
-    template<typename... Arguments>
-    friend void LOG(Arguments... args);
+    template<typename... Arguments> friend void LOG(const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_INFO(const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_WARNING(const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_ERROR(const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_FATAL(const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_TODO(const std::string &message, Arguments... args);
 
-    template<typename... Arguments>
-    friend void LOG_INFO(Arguments... args);
+    template<typename... Arguments> friend void LOG(std::ostream *stream, const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_INFO(std::ostream *stream, const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_WARNING(std::ostream *stream, const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_ERROR(std::ostream *stream, const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_FATAL(std::ostream *stream, const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_TODO(std::ostream *stream, const std::string &message, Arguments... args);
 
-    template<typename... Arguments>
-    friend void LOG_WARNING(Arguments... args);
+    template<typename... Arguments> friend void LOG(std::ofstream *stream, const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_INFO(std::ofstream *stream, const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_WARNING(std::ofstream *stream, const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_ERROR(std::ofstream *stream, const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_FATAL(std::ofstream *stream, const std::string &message, Arguments... args);
+    template<typename... Arguments> friend void LOG_TODO(std::ofstream *stream, const std::string &message, Arguments... args);
 
-    template<typename... Arguments>
-    friend void LOG_ERROR(Arguments... args);
-
-    template<typename... Arguments>
-    friend void LOG_FATAL(Arguments... args);
-
-    template<typename... Arguments>
-    friend void LOG_TODO(Arguments... args);
-
-    template<typename... Arguments>
-    friend const std::string format(Arguments... args);
+    template<typename... Arguments> friend const std::string format(const std::string &message, Arguments... args);
 
     enum class log_channel : std::uint8_t {
         NONE,
@@ -80,11 +110,14 @@ private:
     DECLARE_LOG_CHANNEL(FATAL);
     DECLARE_LOG_CHANNEL(TODO);
 
+#undef DECLARE_LOG_CHANNEL
+
     // FIXME: this should be compile-time constexpr and not run time!
     static const std::map<const log_channel, const std::string_view> log_channels;
 
     static const std::string fmt_log_channel(log_channel channel, const std::string_view &fmt);
     static constexpr const std::string_view print_fmt = "{}: ";
+    static constexpr const std::string_view stream_fmt = "[{}]: ";
 
     // default terminal printing of log messages
     // channel format: "CHANNEL: message"
@@ -95,18 +128,16 @@ private:
         std::fprintf(fp, "%s\n", (fmt_log_channel(channel, print_fmt) + fmt::format(message, std::forward<Arguments>(args)...)).c_str());
     }
 
-#define IMPLEMENT_LOG_CHANNEL_PRINT(channel, func_name)                                              \
-    template<typename... Arguments>                                                                  \
-    constexpr inline static void print_##func_name(const std::string &message, Arguments... args) {          \
-        print(message, log_channel::channel, log_channel_config<log_channel::channel>::fp, args...); \
+    // writes log messages to any std::ostream compatible object (like stringstream or ofstream)
+    // all messages are ended with a new line automatically
+    // stream needs to be flushed manually as needed
+    // channel format: "[CHANNEL] message"
+    // none format: "message"
+    template<typename... Arguments>
+    constexpr inline static void stream(const std::string &message, log_channel channel, std::ostream *stream, Arguments... args)
+    {
+        (*stream) << (fmt_log_channel(channel, stream_fmt) + fmt::format(message, std::forward<Arguments>(args)...)) << '\n';
     }
-
-    IMPLEMENT_LOG_CHANNEL_PRINT(NONE,     general)
-    IMPLEMENT_LOG_CHANNEL_PRINT(INFO,     info)
-    IMPLEMENT_LOG_CHANNEL_PRINT(WARNING,  warning)
-    IMPLEMENT_LOG_CHANNEL_PRINT(ERROR,    error)
-    IMPLEMENT_LOG_CHANNEL_PRINT(FATAL,    fatal)
-    IMPLEMENT_LOG_CHANNEL_PRINT(TODO,     todo)
 
     template<typename... Arguments>
     inline static const std::string format(const std::string &message, Arguments... args)
@@ -117,8 +148,8 @@ private:
     // thread safety for printing to console
     static std::mutex log_print_mutex;
 
-#undef DECLARE_LOG_CHANNEL
-#undef IMPLEMENT_LOG_CHANNEL_PRINT
+    // thread safety for writing to file streams
+    static std::mutex log_file_mutex;
 };
 
 struct logger final : private logger_base
@@ -138,55 +169,43 @@ private:
 };
 
 
-// global logging functions
-// use like: LOG_WARNING("hello {}", "world");
+#define IMPLEMENT_LOG_CHANNEL(func_name, channel)                                         \
+    template<typename... Arguments>                                                       \
+    void func_name(const std::string &message, Arguments... args) {                       \
+        using lb = logger_base;                                                           \
+        std::lock_guard lock{logger_base::log_print_mutex};                               \
+        lb::print(message,                                                                \
+                  lb::log_channel::channel,                                               \
+                  lb::log_channel_config<lb::log_channel::channel>::fp,                   \
+                  std::forward<Arguments>(args)...);                                      \
+    }                                                                                     \
+    template<typename... Arguments>                                                       \
+    inline void func_name(std::ostream *stream, const std::string &message,               \
+                          Arguments... args) {                                            \
+        using lb = logger_base;                                                           \
+        lb::stream(message, lb::log_channel::channel, stream,                             \
+                   std::forward<Arguments>(args)...);                                     \
+    }                                                                                     \
+    template<typename... Arguments>                                                       \
+    void func_name(std::ofstream *stream, const std::string &message,                     \
+                          Arguments... args) {                                            \
+        using lb = logger_base;                                                           \
+        std::lock_guard lock{logger_base::log_file_mutex};                                \
+        lb::stream(message, lb::log_channel::channel, stream,                             \
+                   std::forward<Arguments>(args)...);                                     \
+    }
+
+IMPLEMENT_LOG_CHANNEL(LOG,          NONE);
+IMPLEMENT_LOG_CHANNEL(LOG_INFO,     INFO);
+IMPLEMENT_LOG_CHANNEL(LOG_WARNING,  WARNING);
+IMPLEMENT_LOG_CHANNEL(LOG_ERROR,    ERROR);
+IMPLEMENT_LOG_CHANNEL(LOG_FATAL,    FATAL);
+IMPLEMENT_LOG_CHANNEL(LOG_TODO,     TODO);
 
 template<typename... Arguments>
-void LOG(Arguments... args)
-{{
-    std::lock_guard lock{logger_base::log_print_mutex};
-    logger_base::print_general(std::forward<Arguments>(args)...);
-}}
-
-template<typename... Arguments>
-void LOG_INFO(Arguments... args)
-{{
-    std::lock_guard lock{logger_base::log_print_mutex};
-    logger_base::print_info(std::forward<Arguments>(args)...);
-}}
-
-template<typename... Arguments>
-void LOG_WARNING(Arguments... args)
-{{
-    std::lock_guard lock{logger_base::log_print_mutex};
-    logger_base::print_warning(std::forward<Arguments>(args)...);
-}}
-
-template<typename... Arguments>
-void LOG_ERROR(Arguments... args)
-{{
-    std::lock_guard lock{logger_base::log_print_mutex};
-    logger_base::print_error(std::forward<Arguments>(args)...);
-}}
-
-template<typename... Arguments>
-void LOG_FATAL(Arguments... args)
-{{
-    std::lock_guard lock{logger_base::log_print_mutex};
-    logger_base::print_fatal(std::forward<Arguments>(args)...);
-}}
-
-template<typename... Arguments>
-void LOG_TODO(Arguments... args)
-{{
-    std::lock_guard lock{logger_base::log_print_mutex};
-    logger_base::print_todo(std::forward<Arguments>(args)...);
-}}
-
-template<typename... Arguments>
-inline const std::string format(Arguments... args)
+inline const std::string format(const std::string &message, Arguments... args)
 {
-    return logger_base::format(std::forward<Arguments>(args)...);
+    return logger_base::format(message, std::forward<Arguments>(args)...);
 }
 
 #endif // LOGGER_LOG_HPP
