@@ -32,7 +32,8 @@
 #include <string_view>
 #include <ostream>
 #include <fstream>
-#include <unordered_map>
+
+#include <frozen/unordered_map.h>
 
 #include <mutex>
 
@@ -112,8 +113,14 @@ private:
 
 #undef DECLARE_LOG_CHANNEL
 
-    // FIXME: this should be compile-time constexpr and not run time!
-    static const std::unordered_map<const log_channel, const std::string_view> log_channels;
+    static constexpr const frozen::unordered_map<log_channel, std::string_view, 6> log_channels = {
+        {log_channel::NONE,     log_channel_config<log_channel::NONE>::name},
+        {log_channel::INFO,     log_channel_config<log_channel::INFO>::name},
+        {log_channel::WARNING,  log_channel_config<log_channel::WARNING>::name},
+        {log_channel::ERROR,    log_channel_config<log_channel::ERROR>::name},
+        {log_channel::FATAL,    log_channel_config<log_channel::FATAL>::name},
+        {log_channel::TODO,     log_channel_config<log_channel::TODO>::name},
+    };
 
     static const std::string fmt_log_channel(log_channel channel, const std::string_view &fmt);
     static constexpr const std::string_view print_fmt = "{}: ";

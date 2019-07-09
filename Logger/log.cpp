@@ -1,14 +1,5 @@
 #include <logger/log.hpp>
 
-const std::unordered_map<const logger_base::log_channel, const std::string_view> logger_base::log_channels = {
-    {logger_base::log_channel::NONE,     log_channel_config<log_channel::NONE>::name},
-    {logger_base::log_channel::INFO,     log_channel_config<log_channel::INFO>::name},
-    {logger_base::log_channel::WARNING,  log_channel_config<log_channel::WARNING>::name},
-    {logger_base::log_channel::ERROR,    log_channel_config<log_channel::ERROR>::name},
-    {logger_base::log_channel::FATAL,    log_channel_config<log_channel::FATAL>::name},
-    {logger_base::log_channel::TODO,     log_channel_config<log_channel::TODO>::name},
-};
-
 std::mutex logger_base::log_print_mutex;
 std::mutex logger_base::log_file_mutex;
 

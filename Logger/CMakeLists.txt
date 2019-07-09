@@ -13,15 +13,16 @@ message(STATUS "${Esc}[1m > Configuring sub target fmt...${Esc}[m")
 add_subdirectory("${PROJECT_SOURCE_DIR}/Libs/fmt" "${PROJECT_BINARY_DIR}/Libs/fmt")
 message(STATUS "${Esc}[1m > Configured sub target fmt.${Esc}[m")
 
-# globally include fmt headers
-include_directories("${PROJECT_SOURCE_DIR}/Libs/fmt/include")
-
 
 add_library(Logger STATIC ${SourceList_Logger})
 
 SetCppStandard(Logger 17)
 set_target_properties(Logger PROPERTIES PREFIX "")
 set_target_properties(Logger PROPERTIES OUTPUT_NAME "Logger")
+
+# include header-only libraries
+target_include_directories(Logger PRIVATE "${PROJECT_SOURCE_DIR}/Libs/fmt/include")
+target_include_directories(Logger PRIVATE "${PROJECT_SOURCE_DIR}/Libs/frozen/include")
 
 target_include_directories(Logger PRIVATE "${PROJECT_SOURCE_DIR}/Logger")
 set(LOGGER_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/Logger" PARENT_SCOPE)
