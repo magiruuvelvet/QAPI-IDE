@@ -13,3 +13,6 @@
 [submodule "Libs/bandit"]
 	path = Libs/bandit
 	url = https://github.com/banditcpp/bandit.git
+[submodule "Libs/frozen"]
+	path = Libs/frozen
+	url = https://github.com/serge-sans-paille/frozen.git
