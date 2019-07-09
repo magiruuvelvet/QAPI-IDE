@@ -32,7 +32,7 @@
 #include <string_view>
 #include <ostream>
 #include <fstream>
-#include <map>
+#include <unordered_map>
 
 #include <mutex>
 
@@ -113,7 +113,7 @@ private:
 #undef DECLARE_LOG_CHANNEL
 
     // FIXME: this should be compile-time constexpr and not run time!
-    static const std::map<const log_channel, const std::string_view> log_channels;
+    static const std::unordered_map<const log_channel, const std::string_view> log_channels;
 
     static const std::string fmt_log_channel(log_channel channel, const std::string_view &fmt);
     static constexpr const std::string_view print_fmt = "{}: ";
