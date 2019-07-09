@@ -14,10 +14,16 @@ go_bandit([]{
             AssertThat(res, Equals("hello world 3 3.30 3"));
         });
 
-        it("[stringstream]", [&]{
+        it("[stringstream 1]", [&]{
             std::stringstream ss;
             LOG(&ss, "123 {} 5", "test", 5);
             AssertThat(ss.str(), Equals("123 test 5\n"));
+        });
+
+        it("[stringstream 2]", [&]{
+            std::stringstream ss;
+            LOG_INFO(&ss, "123 {} 5", "test", 5);
+            AssertThat(ss.str(), Equals("[INFO]: 123 test 5\n"));
         });
 
         // booleans should be formatted as such, and not as numbers (1, 0)
