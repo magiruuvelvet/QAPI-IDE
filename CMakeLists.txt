@@ -64,6 +64,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib-static)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# Header-only libraries
+include_directories("${PROJECT_SOURCE_DIR}/Libs/fmt/include")
+include_directories("${PROJECT_SOURCE_DIR}/Libs/frozen/include")
+
 # Targets
 add_subdirectory(Logger)
 add_subdirectory(RequestLib)
