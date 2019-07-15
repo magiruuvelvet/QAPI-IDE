@@ -20,7 +20,9 @@ using namespace bandit;
 #include "request-lib/headers.hpp"
 
 // ScriptingInterface tests
+#ifdef HAS_SCRIPTING_INTERFACE
 #include "script/cpp.hpp"
+#endif
 
 int main(int argc, char **argv)
 {
