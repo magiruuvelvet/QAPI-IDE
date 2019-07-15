@@ -17,6 +17,7 @@ public:
     ~ClingCppScript() override;
 
     bool bindValue(const std::string &name, const std::any &value) override;
+    bool bindVariable(const std::string &name, ScriptVariable &var) override;
     bool bindFunction(const std::string &name, const std::function<void()> &func) override;
 
     std::int16_t evaluate(std::string &output, std::string &error) override;

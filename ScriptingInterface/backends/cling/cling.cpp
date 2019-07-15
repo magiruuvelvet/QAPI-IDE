@@ -54,6 +54,7 @@ ClingCppScript::ClingCppScript()
     this->interp->declare("#include <cstdlib>");
     this->interp->declare("#include <algorithm>");
     this->interp->declare("#include <functional>");
+    this->interp->declare("#include <any>");
 
     // global output buffer
     this->interp->declare("std::stringstream out;");
@@ -90,6 +91,44 @@ bool ClingCppScript::bindValue(const std::string &name, const std::any &value)
 
     else INTERP_DECLARE_VALUE_STR(std::string)
     else INTERP_DECLARE_VALUE_STR(std::string_view)
+
+#undef INTERP_DECLARE_VALUE
+#undef INTERP_DECLARE_VALUE_STR
+
+    else throw UnsupportedDataType(format("cling: data type not supported: {}", type));
+
+    return res == cling::Interpreter::kSuccess;
+}
+
+bool ClingCppScript::bindVariable(const std::string &name, ScriptVariable &var)
+{
+    const auto type = std::string_view{var.value.type().name()};
+    cling::Interpreter::CompilationResult res = {};
+
+    // FIXME: is is not working as it should. memory access violation problem
+
+    // type val = std::any_cast<type>(*reinterpret_cast<std::any*>(a.address));
+#define INTERP_DECLARE_VALUE(tid)                                                                \
+    if (type == type_info<tid>::name()) {                                                        \
+        res = this->interp->declare(format("uintptr_t cling_bind_var_addr_{} = {};"              \
+                                           "std::any *{} = reinterpret_cast<std::any*>({});",    \
+                                           name, var.address, name, var.address));               \
+    }
+
+         INTERP_DECLARE_VALUE(std::int8_t)
+    else INTERP_DECLARE_VALUE(std::int16_t)
+    else INTERP_DECLARE_VALUE(std::int32_t)
+    else INTERP_DECLARE_VALUE(std::int64_t)
+
+    else INTERP_DECLARE_VALUE(std::uint8_t)
+    else INTERP_DECLARE_VALUE(std::uint16_t)
+    else INTERP_DECLARE_VALUE(std::uint32_t)
+    else INTERP_DECLARE_VALUE(std::uint64_t)
+
+    else INTERP_DECLARE_VALUE(std::string)
+    else INTERP_DECLARE_VALUE(std::string_view)
+
+#undef INTERP_DECLARE_VALUE
 
     else throw UnsupportedDataType(format("cling: data type not supported: {}", type));
 
