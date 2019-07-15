@@ -32,10 +32,30 @@ versions of said dependencies.
  - OpenSSL
  - zlib
 
+Scripting Interface dependencies:
+
+ - **C++**: [cling](https://root.cern.ch/cling) built with `CMAKE_BUILD_TYPE=Release` and `BUILD_SHARED_LIBS=ON`\
+   don't build a debug build or use static linkage, the link time increases heavily (minutes) and produces a
+   gigabyte huge binary (2GB+) which is very slow and inefficient
+
+ - **JavaScript**: not supported right now, but planned
+
 Additional build requirements are:
 
  - C++17 compiler (clang 8+ or gcc 9+ are highly recommended)
  - cmake 3.12+
+
+## Scripting Interface
+
+I plan to support scripting similar to Postman. I want to support JavaScript and C++
+as scripting backends. Scripting is disabled as of now by default in CMake.
+Some minimal C++ code running works already, but without binding of variables and
+functions.
+
+**Why C++**
+
+Because why not and because I can. C++ is not enabled by default during CMake so
+don't worry if you're not gonna use it. This is only for crazy people like me :)
 
 ## Supported formats with pretty-printing (and syntax highlighting)
 
