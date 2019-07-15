@@ -72,9 +72,16 @@ include_directories("${PROJECT_SOURCE_DIR}/Libs/frozen/include")
 add_subdirectory(Logger)
 add_subdirectory(RequestLib)
 add_subdirectory(JsonViewer)
+
+option(ENABLE_SCRIPTING "Build with scripting support" OFF)
+if (ENABLE_SCRIPTING)
+    message(STATUS "Scripting support enabled.")
+    add_subdirectory(ScriptingInterface)
+endif()
+
 add_subdirectory(UserInterface)
 
-set(ENABLE_TESTS ON CACHE BOOL "Build the unit tests")
+option(ENABLE_TESTS "Build the unit tests" ON)
 if (ENABLE_TESTS)
     message(STATUS "Unit tests enabled.")
     add_subdirectory(Tests)
