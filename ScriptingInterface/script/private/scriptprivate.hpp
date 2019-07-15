@@ -21,6 +21,7 @@ protected:
     }
 
     virtual bool bindValue(const std::string &name, const std::any &value) = 0;
+    virtual bool bindVariable(const std::string &name, ScriptVariable &var) = 0;
     virtual bool bindFunction(const std::string &name, const std::function<void()> &func) = 0;
 
     virtual std::int16_t evaluate(std::string &output, std::string &error) = 0;

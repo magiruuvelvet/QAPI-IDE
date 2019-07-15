@@ -50,6 +50,17 @@ public:
     bool bindValue(const std::string &name, const std::any &value);
 
     /**
+     * Binds a dynamic variable to the backend. If the value
+     * is modified in the script, it reflects changes on the
+     * C++ side.
+     *
+     * name is the variable name used in the script
+     *
+     * throws UnsupportedDataType on incompatible data types
+     */
+    bool bindVariable(const std::string &name, ScriptVariable &var);
+
+    /**
      * Binds a function to the backend.
      *
      * TODO: needs to be designed first without exposing private APIs

@@ -87,6 +87,15 @@ bool Script::bindValue(const std::string &name, const std::any &value)
     return false;
 }
 
+bool Script::bindVariable(const std::string &name, ScriptVariable &var)
+{
+    if (this->_script)
+    {
+        return this->_script->bindVariable(name, var);
+    }
+    return false;
+}
+
 bool Script::bindFunction(const std::string &name, const std::function<void()> &func)
 {
     if (this->_script)
