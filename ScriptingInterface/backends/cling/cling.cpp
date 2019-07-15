@@ -56,11 +56,11 @@ ClingCppScript::ClingCppScript()
 
     // global output buffer
     this->interp->declare("std::stringstream out;");
+    this->interp->declare("std::stringstream err;");
 }
 
 ClingCppScript::~ClingCppScript()
 {
-
 }
 
 bool ClingCppScript::bindValue(const std::string &name, const std::any &value)
@@ -102,18 +102,33 @@ bool ClingCppScript::bindFunction(const std::string &name, const std::function<v
 
 std::int16_t ClingCppScript::evaluate(std::string &output, std::string &error)
 {
+    // wrap script inside a function to handle return codes
+    // appends a "return 0;" to the end, if the script returns
+    // by itself, the "return 0;" statement is never reached
+    // and the scripts return status is used instead
+    const std::string script =
+            "std::uint8_t cling_script() { " +
+            this->script +
+            " return 0; } auto cling_ret_status = cling_script();";
+
     // execute C++ code
-    auto res = this->interp->process(this->script);
+    const auto res = this->interp->process(script, nullptr, nullptr, true);
+
+    // get return status
+    cling::Value val;
+    this->interp->process("cling_ret_status;", &val, nullptr, true);
+    const auto ret = val.simplisticCastAs<std::uint8_t>();
 
     // get output from globally declared "out" buffer
-    cling::Value val;
     this->interp->process("out.str();", &val, nullptr, true);
     output = std::string{*reinterpret_cast<const std::string*>(val.getPtr())};
+    this->interp->process("err.str();", &val, nullptr, true);
+    error = std::string{*reinterpret_cast<const std::string*>(val.getPtr())};
 
-    // TODO: can the return codes be improved?
+    // NOTE: cling can't report parse or compile errors
     switch (res)
     {
-        case cling::Interpreter::kSuccess: return Script::NoError;
+        case cling::Interpreter::kSuccess: return static_cast<std::int16_t>(ret);
         case cling::Interpreter::kFailure: return Script::RuntimeError;
         case cling::Interpreter::kMoreInputExpected: return Script::ParseError;
     }
