@@ -71,6 +71,7 @@ public:
      * Negative values indicate errors.
      */
     std::int16_t evaluate(std::string &output);
+    std::int16_t evaluate(std::string &output, std::string &error);
 
 private:
     Language _language;

@@ -105,11 +105,18 @@ std::int16_t Script::evaluate()
 
 std::int16_t Script::evaluate(std::string &output)
 {
+    // evaluate and ignore output
+    std::string err;
+    return this->evaluate(output, err);
+}
+
+std::int16_t Script::evaluate(std::string &output, std::string &error)
+{
     if (!this->_script)
     {
         // an unsupported language was given in the constructor
         return BackendNotInitialized;
     }
 
-    return this->_script->evaluate(output);
+    return this->_script->evaluate(output, error);
 }

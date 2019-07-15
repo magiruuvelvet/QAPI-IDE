@@ -100,7 +100,7 @@ bool ClingCppScript::bindFunction(const std::string &name, const std::function<v
     return false;
 }
 
-std::int16_t ClingCppScript::evaluate(std::string &output)
+std::int16_t ClingCppScript::evaluate(std::string &output, std::string &error)
 {
     // execute C++ code
     auto res = this->interp->process(this->script);

@@ -22,7 +22,7 @@ bool JavaScript::bindFunction(const std::string &name, const std::function<void(
     return false;
 }
 
-std::int16_t JavaScript::evaluate(std::string &output)
+std::int16_t JavaScript::evaluate(std::string &output, std::string &error)
 {
     return -255; // backend not initialized
 }
