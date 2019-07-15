@@ -24,8 +24,9 @@ struct type_info final
 struct cling_args final
 {
     static constexpr char *arg0 = const_cast<char*>("cling");
-    static constexpr char *argv[] = {arg0, nullptr};
-    static constexpr int argc = 1;
+    static constexpr char *arg1 = const_cast<char*>("-std=c++1z"); // C++17
+    static constexpr char *argv[] = {arg0, arg1, nullptr};
+    static constexpr int argc = 2;
 };
 
 } // namespace
