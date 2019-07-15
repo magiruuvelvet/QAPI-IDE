@@ -33,4 +33,11 @@ file(MAKE_DIRECTORY "${UNIT_TEST_TEMPORARY_DIR}")
 target_compile_definitions(Tests PRIVATE "-DUNIT_TEST_TEMPORARY_DIR=\"${UNIT_TEST_TEMPORARY_DIR}\"")
 message(STATUS "Temporary directory for unit tests: ${UNIT_TEST_TEMPORARY_DIR}")
 
+if (ENABLE_SCRIPTING)
+    message(STATUS "Scripting enabled in target Tests.")
+    target_include_directories(Tests PRIVATE "${SCRIPTINGINTERFACE_INCLUDE_DIR}")
+    target_link_libraries(Tests PRIVATE ScriptingInterface)
+    target_compile_definitions(Tests PRIVATE "-DHAS_SCRIPTING_INTERFACE")
+endif()
+
 message(STATUS "${Esc}[1mConfigured target Tests.${Esc}[m")

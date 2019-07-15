@@ -19,6 +19,9 @@ using namespace bandit;
 #include "request-lib/url.hpp"
 #include "request-lib/headers.hpp"
 
+// ScriptingInterface tests
+#include "script/cpp.hpp"
+
 int main(int argc, char **argv)
 {
     LOG("Running tests on {}...", logger::get_system_details());
