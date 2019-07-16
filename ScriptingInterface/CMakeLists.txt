@@ -32,14 +32,11 @@ endif()
 # JavaScript scripting support (Macro: SCRIPTING_JAVASCRIPT_SUPPORT)
 option(ENABLE_JAVASCRIPT "Build with JavaScript scripting support" OFF)
 if (ENABLE_JAVASCRIPT)
-    # NOTE: still deciding on a JavaScript implementation
-    # mujs seems pretty lightweight for embedding, just a single file "one.c", but the API sucks
-    # in terms of C++17 compatibility, need to manually manage raw pointers and do old C *ugh*
-    # v8 is a heavy abomination and also doesn't use CMake, sounds not very healthy to integrate,
-    # but has a C++ API; once the build system problem is solved v8 seems like a nice choice
-    message(WARNING "Development note: still deciding on what JavaScript VM implementation to use")
-    message(WARNING "This option is a stub right now")
-    set(ENABLE_JAVASCRIPT OFF CACHE "Build with JavaScript scripting support" INTERNAL FORCE)
+    # NOTE: replace mujs with v8, mujs' API was not designed with OOP bindings in mind
+    #       and requires "static" functions for bindings
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(MUJS REQUIRED mujs)
+    target_compile_definitions(ScriptingInterface PRIVATE "-DSCRIPTING_JAVASCRIPT_SUPPORT")
 else()
     message(STATUS "JavaScript scripting support disabled.")
     set(ENABLE_JAVASCRIPT OFF CACHE "Build with JavaScript scripting support" INTERNAL FORCE)
@@ -71,6 +68,11 @@ if (LLVM_FOUND)
     target_link_libraries(ScriptingInterface PUBLIC clingInterpreter)
     target_compile_definitions(ScriptingInterface PRIVATE "-DLLVMDIR=\"${LLVM_INSTALL_PREFIX}\"")
     set_target_properties(ScriptingInterface PROPERTIES ENABLE_EXPORTS 1)
+endif()
+
+if (MUJS_FOUND)
+    target_include_directories(ScriptingInterface PRIVATE "${MUJS_INCLUDE_DIRS}")
+    target_link_libraries(ScriptingInterface PUBLIC "${MUJS_LIBRARIES}")
 endif()
 
 message(STATUS "${Esc}[1mConfigured target ScriptingInterface.${Esc}[m")
