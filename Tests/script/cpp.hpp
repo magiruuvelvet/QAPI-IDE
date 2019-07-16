@@ -6,6 +6,10 @@ using namespace snowhouse;
 using namespace bandit;
 
 go_bandit([]{
+
+    if (ScriptingInterface::hasCppSupport())
+    {
+
     describe("C++", []{
         it("[static value binding]", [&]{
             Script scr(Script::Cpp);
@@ -58,4 +62,6 @@ go_bandit([]{
             AssertThat(ret, Equals(2));
         });
     });
+
+    }
 });
