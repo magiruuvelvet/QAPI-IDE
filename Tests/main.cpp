@@ -22,6 +22,7 @@ using namespace bandit;
 // ScriptingInterface tests
 #ifdef HAS_SCRIPTING_INTERFACE
 #include "script/cpp.hpp"
+#include "script/js.hpp"
 #endif
 
 int main(int argc, char **argv)
