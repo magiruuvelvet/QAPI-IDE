@@ -25,8 +25,10 @@ struct cling_args final
 {
     static constexpr char *arg0 = const_cast<char*>("cling");
     static constexpr char *arg1 = const_cast<char*>("-std=c++1z"); // C++17
-    static constexpr char *argv[] = {arg0, arg1, nullptr};
-    static constexpr int argc = 2;
+    static constexpr char *arg2 = const_cast<char*>("-L" LLVMDIR "/include");
+    static constexpr char *arg3 = const_cast<char*>("-I" LLVMDIR "/include");
+    static constexpr char *argv[] = {arg0, arg1, arg2, arg3, nullptr};
+    static constexpr int argc = 4;
 };
 
 } // namespace
@@ -34,10 +36,6 @@ struct cling_args final
 ClingCppScript::ClingCppScript()
 {
     // FIXME: LLVMDIR should not be hardcoded, but configurable for flexibility
-    // FIXME: cling::Interpreter doesn't find its runtime universe if the header
-    //        files aren't copied over to the bin directory, this is bu****** and
-    //        needs to be fixed by providing the path to the include directory instead
-    // NOTE:  adding an -L/path/to/inc option to the cling_args struct causes a SIGSEGV with no backtrace ???
 
     // create a cling interpreter instance,
     this->interp = std::make_shared<cling::Interpreter>(cling_args::argc, cling_args::argv, LLVMDIR);
