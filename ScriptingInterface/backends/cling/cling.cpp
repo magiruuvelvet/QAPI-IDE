@@ -53,6 +53,7 @@ ClingCppScript::ClingCppScript()
     this->interp->declare("#include <algorithm>");
     this->interp->declare("#include <functional>");
     this->interp->declare("#include <any>");
+    this->interp->declare("#include <cmath>");
 
     // global output buffer
     this->interp->declare("std::stringstream out;");
