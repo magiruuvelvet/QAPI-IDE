@@ -21,13 +21,14 @@ public:
 
     enum ErrorCode {
         NoError = 0,
-        ParseError = -1,
-        RuntimeError = -2,
-        UnhandledExceptionThrown = -3,
-        MemoryAllocationError = -4,
-        ScriptContentsEmpty = -5,
+        ParseError = -1,                    // script couldn't be parsed
+        RuntimeError = -2,                  // a runtime error occurred
+        UnhandledExceptionThrown = -3,      // unhandled exception thrown (backend specific)
+        MemoryAllocationError = -4,         // unable to allocate VM memory (backend specific)
+        ScriptContentsEmpty = -5,           // empty script provided (unused)
+        UnknownError = -100,                // when the exact error isn't know due to API limitations
 
-        BackendNotInitialized = -255,
+        BackendNotInitialized = -255,       // backend not initialized or not supported
     };
 
     Script(Language language);
