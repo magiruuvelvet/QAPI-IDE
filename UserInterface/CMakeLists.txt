@@ -56,4 +56,11 @@ target_include_directories(UserInterface PRIVATE "${REQUESTLIB_INCLUDE_DIR}")
 target_include_directories(UserInterface PRIVATE "${JSONVIEWER_INCLUDE_DIR}")
 target_include_directories(UserInterface PRIVATE "${LOGGER_INCLUDE_DIR}")
 
+if (ENABLE_SCRIPTING)
+    message(STATUS "Scripting enabled in target UserInterface.")
+    target_include_directories(UserInterface PRIVATE "${SCRIPTINGINTERFACE_INCLUDE_DIR}")
+    target_link_libraries(UserInterface PRIVATE ScriptingInterface)
+    target_compile_definitions(UserInterface PRIVATE "-DHAS_SCRIPTING_INTERFACE")
+endif()
+
 message(STATUS "${Esc}[1mConfigured target UserInterface.${Esc}[m")
