@@ -20,10 +20,32 @@ struct menu final
 struct menu_entry final
 {
 public:
+    // separator
+    menu_entry()
+    {
+        entry = std::make_shared<QAction>();
+        entry->setSeparator(true);
+    }
+
+    // sub menu
+    menu_entry(const menu &submenu)
+    {
+        entry = std::make_shared<QAction>(submenu.menu->title());
+        entry->setMenu(submenu.menu.get());
+    }
+    menu_entry(const menu *submenu)
+    {
+        entry = std::make_shared<QAction>(submenu->menu->title());
+        entry->setMenu(submenu->menu.get());
+    }
+
+    // real entry
     menu_entry(const QString &name, const QKeySequence &shortcut,
-               const QWidget *receiver, const std::function<void()> &callback)
+               const QWidget *receiver, const std::function<void()> &callback,
+               bool enabled = true)
     {
         entry = std::make_shared<QAction>(name);
+        entry->setEnabled(enabled);
         entry->setShortcut(shortcut);
         QObject::connect(entry.get(), &QAction::triggered, receiver, callback);
     }
