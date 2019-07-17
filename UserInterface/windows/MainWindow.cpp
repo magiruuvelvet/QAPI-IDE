@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
         menu_entry(tr("Open JavaScript Console"), {}, this, [&]{ }));
 
     // create workbench menu
-    this->_workbenchMenu = menu_creator::make_menu(tr("Workbench"),
+    this->_workbenchMenu = menu_creator::make_menu(tr("&Workbench"),
         menu_entry(tr("New Request"),       tr("Ctrl+N"),       this, [&]{ }, false),
         menu_entry(),
         menu_entry(this->_workbenchMenu_replSubMenu),
@@ -39,12 +39,12 @@ MainWindow::MainWindow(QWidget *parent)
     menu_creator::add_menu(this->_menuBar, this->_workbenchMenu);
 
     // create view menu
-    this->_viewMenu = menu_creator::make_menu(tr("View"),
+    this->_viewMenu = menu_creator::make_menu(tr("&View"),
         menu_entry(tr("Event Log"),         {},                 this, [&]{ }, true, true));
     menu_creator::add_menu(this->_menuBar, this->_viewMenu);
 
     // create help menu
-    this->_helpMenu = menu_creator::make_menu(tr("Help"),
+    this->_helpMenu = menu_creator::make_menu(tr("&Help"),
         menu_entry(tr("About"),             {},                 this, [&]{ }),
         menu_entry(tr("About Qt"),          {},                 this, [&]{ qApp->aboutQt(); }));
     menu_creator::add_menu(this->_menuBar, this->_helpMenu);
