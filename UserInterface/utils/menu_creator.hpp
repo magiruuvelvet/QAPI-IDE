@@ -46,15 +46,26 @@ public:
     }
 
     // real entry
+    // callback must be one of
+    //  > []{}          trigger entries
+    //  > [](bool){}    checkbox entries
+    template<typename Func>
     menu_entry(const QString &name, const QKeySequence &shortcut,
-               const QWidget *receiver, const std::function<void()> &callback,
+               const QWidget *receiver, const Func &callback,
                bool enabled = true, bool checkbox = false)
     {
         entry = std::make_shared<QAction>(name);
         entry->setEnabled(enabled);
         entry->setShortcut(shortcut);
         entry->setCheckable(checkbox);
-        QObject::connect(entry.get(), &QAction::triggered, receiver, callback);
+        if (checkbox)
+        {
+            QObject::connect(entry.get(), &QAction::toggled, receiver, callback);
+        }
+        else
+        {
+            QObject::connect(entry.get(), &QAction::triggered, receiver, callback);
+        }
     }
 
     menu_entry(const QString &name, const QKeySequence &shortcut,
