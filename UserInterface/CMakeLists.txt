@@ -47,7 +47,7 @@ if (Qt5LinguistTools_FOUND)
     set_source_files_properties(${UI_TRANSLATION_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/i18n")
 
     # copy qrc file
-    configure_file(i18n/translations.qrc "${CMAKE_CURRENT_BINARY_DIR}/i18n" COPYONLY)
+    configure_file("i18n/translations.qrc" "${CMAKE_CURRENT_BINARY_DIR}/i18n/translations.qrc" COPYONLY)
 
     qt5_create_translation(QM_FILES
         ${SourceList_UserInterface} # source files; tr()
