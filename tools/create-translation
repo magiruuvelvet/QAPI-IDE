@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-lupdate \
+lupdate -no-obsolete \
     UserInterface/**/**.cpp \
     UserInterface/**/**.hpp \
     -ts UserInterface/i18n/$1.ts
