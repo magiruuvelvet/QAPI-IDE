@@ -6,6 +6,7 @@
 #include <functional>
 
 #include <QString>
+#include <QMenuBar>
 #include <QMenu>
 #include <QAction>
 
@@ -38,16 +39,30 @@ public:
         entry = std::make_shared<QAction>(submenu->menu->title());
         entry->setMenu(submenu->menu.get());
     }
+    menu_entry(const std::shared_ptr<menu> &submenu)
+    {
+        entry = std::make_shared<QAction>(submenu->menu->title());
+        entry->setMenu(submenu->menu.get());
+    }
 
     // real entry
     menu_entry(const QString &name, const QKeySequence &shortcut,
                const QWidget *receiver, const std::function<void()> &callback,
-               bool enabled = true)
+               bool enabled = true, bool checkbox = false)
     {
         entry = std::make_shared<QAction>(name);
         entry->setEnabled(enabled);
         entry->setShortcut(shortcut);
+        entry->setCheckable(checkbox);
         QObject::connect(entry.get(), &QAction::triggered, receiver, callback);
+    }
+
+    menu_entry(const QString &name, const QKeySequence &shortcut,
+               const QWidget *receiver, const std::function<void()> &callback,
+               const QIcon &icon, bool enabled = true, bool checkbox = false)
+        : menu_entry(name, shortcut, receiver, callback, enabled, checkbox)
+    {
+        entry->setIcon(icon);
     }
 
     inline constexpr QAction *get()
@@ -75,6 +90,11 @@ public:
         }
 
         return menu_decl;
+    }
+
+    static inline void add_menu(std::unique_ptr<QMenuBar> &menubar, std::shared_ptr<menu> &menu)
+    {
+        menubar->addMenu(menu->menu.get());
     }
 
 private:
