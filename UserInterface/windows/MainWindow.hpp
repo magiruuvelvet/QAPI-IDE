@@ -32,6 +32,8 @@ private:
     std::shared_ptr<menu> _fileMenu;
     std::shared_ptr<menu> _workbenchMenu;
     std::shared_ptr<menu> _workbenchMenu_replSubMenu;
+    std::shared_ptr<menu> _viewMenu;
+    std::shared_ptr<menu> _helpMenu;
 };
 
 #endif // MAINWINDOW_HPP
