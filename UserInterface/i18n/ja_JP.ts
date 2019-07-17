@@ -40,43 +40,89 @@
     </message>
     <message>
         <location filename="../windows/MainWindow.cpp" line="22"/>
+        <source>Ctrl+S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/MainWindow.cpp" line="22"/>
+        <source>Save current workspace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/MainWindow.cpp" line="23"/>
+        <source>Save to new workspace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/MainWindow.cpp" line="23"/>
+        <source>Ctrl+Shift+S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/MainWindow.cpp" line="25"/>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../windows/MainWindow.cpp" line="22"/>
+        <location filename="../windows/MainWindow.cpp" line="25"/>
         <source>Ctrl+Q</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/MainWindow.cpp" line="26"/>
-        <source>Repl</source>
+        <location filename="../windows/MainWindow.cpp" line="29"/>
+        <source>Scripting Console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/MainWindow.cpp" line="27"/>
+        <location filename="../windows/MainWindow.cpp" line="30"/>
         <source>Open C++ Console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/MainWindow.cpp" line="28"/>
+        <location filename="../windows/MainWindow.cpp" line="31"/>
         <source>Open JavaScript Console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/MainWindow.cpp" line="31"/>
-        <source>Workbench</source>
+        <location filename="../windows/MainWindow.cpp" line="34"/>
+        <source>&amp;Workbench</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/MainWindow.cpp" line="32"/>
+        <location filename="../windows/MainWindow.cpp" line="42"/>
+        <source>&amp;View</source>
+        <translation>表示(&amp;V)</translation>
+    </message>
+    <message>
+        <location filename="../windows/MainWindow.cpp" line="47"/>
+        <source>&amp;Help</source>
+        <translation>ヘルプ(&amp;H)</translation>
+    </message>
+    <message>
+        <location filename="../windows/MainWindow.cpp" line="35"/>
         <source>New Request</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/MainWindow.cpp" line="32"/>
+        <location filename="../windows/MainWindow.cpp" line="35"/>
         <source>Ctrl+N</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/MainWindow.cpp" line="38"/>
+        <location filename="../windows/MainWindow.cpp" line="43"/>
+        <source>Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/MainWindow.cpp" line="48"/>
+        <source>About</source>
+        <translation>このアプリについて</translation>
+    </message>
+    <message>
+        <location filename="../windows/MainWindow.cpp" line="49"/>
+        <source>About Qt</source>
+        <translation>Qt について</translation>
     </message>
 </context>
 </TS>
