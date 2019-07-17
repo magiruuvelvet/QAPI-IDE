@@ -7,6 +7,8 @@
 #include <QBoxLayout>
 #include <QMenuBar>
 
+#include <widgets/StatusBar.hpp>
+
 struct menu;
 
 class MainWindow : public QWidget
@@ -19,14 +21,18 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    //void keyPressEvent(QKeyEvent *event) override;
 
 private:
     void newWorkspace();
     void openWorkspace();
     void closeWorkspace();
 
+    void viewEventLogToggled(bool checked);
+
 private:
-    std::unique_ptr<QHBoxLayout> _rootLayout;
+    std::unique_ptr<QVBoxLayout> _rootLayout;
+    std::unique_ptr<StatusBar> _statusBar;
 
     std::unique_ptr<QMenuBar> _menuBar;
     std::shared_ptr<menu> _fileMenu;
