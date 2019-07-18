@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
     this->_rootLayout = std::make_unique<QVBoxLayout>();
-    this->_rootLayout->setMargin(0);
     this->_rootLayout->setContentsMargins(0,0,0,0);
     this->_rootLayout->setSpacing(0);
 

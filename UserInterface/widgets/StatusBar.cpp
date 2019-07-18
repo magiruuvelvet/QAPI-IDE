@@ -4,12 +4,10 @@ StatusBar::StatusBar(QWidget *parent)
     : QWidget(parent)
 {
     this->_rootLayout = std::make_unique<QVBoxLayout>();
-    this->_rootLayout->setMargin(0);
     this->_rootLayout->setContentsMargins(0,0,0,0);
     this->_rootLayout->setSpacing(0);
 
     this->_contentLayout = std::make_unique<QHBoxLayout>();
-    this->_contentLayout->setMargin(4);
     this->_contentLayout->setContentsMargins(12, 5, 12, 5);
     this->_contentLayout->setSpacing(5);
 
