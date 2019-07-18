@@ -20,6 +20,9 @@
  * All logging functions append a new line (\n) character automatically.
  *
  *
+ * The logging toggle function is not thread-safe!
+ *
+ *
  * For general string formatting use the format() function with the same
  * parameters as the terminal printing one.
  *
@@ -221,7 +224,7 @@ private:
         func_name(std::string{message}, std::forward<Arguments>(args)...);                \
     }                                                                                     \
     template<typename... Arguments> __attribute__((noinline))                             \
-    inline void func_name(std::ostream *stream, const std::string &message,               \
+    void func_name(std::ostream *stream, const std::string &message,                      \
                           Arguments... args) {                                            \
         using lb = logger_base;                                                           \
         if (!lb::enabled(lb::log_channel::channel)) { return; }                           \
