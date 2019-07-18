@@ -2,6 +2,14 @@
 
 API Development and Testing Environment written in C++ and Qt
 
+| **Build Status**           |                 |
+|----------------------------|-----------------|
+| FreeBSD 12 / clang 8.0     | [![](https://jenkins.magiruuvelvet.gdn/job/QAPI-IDE/badge/icon?style=flat-square)](https://jenkins.magiruuvelvet.gdn/job/QAPI-IDE/lastBuild/console) |
+| Linux                      | no CI setup yet |
+| Windows                    | no CI setup yet |
+| macOS                      | no CI setup yet |
+
+
 ## Notice
 
 This software is a draft right now. I attempt to build a native API development
