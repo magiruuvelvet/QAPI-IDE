@@ -4,8 +4,8 @@ API Development and Testing Environment written in C++ and Qt
 
 | **Build Status**           |                 |
 |----------------------------|-----------------|
-| FreeBSD 12 / clang 8.0     | [![](https://jenkins.magiruuvelvet.gdn/job/QAPI-IDE/badge/icon?style=flat-square)](https://jenkins.magiruuvelvet.gdn/job/QAPI-IDE/lastBuild/console) |
-| Linux                      | no CI setup yet |
+| FreeBSD 12 / clang 8.0     | [![](https://jenkins.magiruuvelvet.gdn/job/QAPI-IDE/Platforms=freebsd/badge/icon?style=flat-square)](https://jenkins.magiruuvelvet.gdn/job/QAPI-IDE/Platforms=freebsd/lastBuild/console) |
+| Arch Linux / clang 8.0     | [![](https://jenkins.magiruuvelvet.gdn/job/QAPI-IDE/Platforms=linux/badge/icon?style=flat-square)](https://jenkins.magiruuvelvet.gdn/job/QAPI-IDE/Platforms=linux/lastBuild/console) |
 | Windows                    | no CI setup yet |
 | macOS                      | no CI setup yet |
 
