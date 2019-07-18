@@ -9,10 +9,10 @@
  * --> Print formatted message to terminal (thread safe and synchronized)
  * LOG_channel("your formatted message", args...);
  *
- * --> Write formatted message to a std::ostream object (not thread safe, use one stream per thread)
+ * --> Write formatted message to a std::ostream object (not thread safe, use one stream per thread or a mutex)
  * LOG_channel(&stringstream, "your formatted message", args...);
  *
- * --> Write formatted message to a std::ofstream file (thread safe and synchronized, not flushed automatically)
+ * --> Write formatted message to a std::ofstream file (not thread safe, use one stream per thread or a mutex, not flushed automatically)
  *     Call .flush() on the file stream as needed yourself.
  * LOG_channel(&fstream, "your formatted message", args...);
  *
@@ -69,12 +69,12 @@ private:
     template<typename... Arguments> friend void LOG_FATAL(std::ostream *stream, const std::string &message, Arguments... args);
     template<typename... Arguments> friend void LOG_TODO(std::ostream *stream, const std::string &message, Arguments... args);
 
-    template<typename... Arguments> friend void LOG(std::ofstream *stream, const std::string &message, Arguments... args);
-    template<typename... Arguments> friend void LOG_INFO(std::ofstream *stream, const std::string &message, Arguments... args);
-    template<typename... Arguments> friend void LOG_WARNING(std::ofstream *stream, const std::string &message, Arguments... args);
-    template<typename... Arguments> friend void LOG_ERROR(std::ofstream *stream, const std::string &message, Arguments... args);
-    template<typename... Arguments> friend void LOG_FATAL(std::ofstream *stream, const std::string &message, Arguments... args);
-    template<typename... Arguments> friend void LOG_TODO(std::ofstream *stream, const std::string &message, Arguments... args);
+    friend constexpr void LOG(bool enabled);
+    friend constexpr void LOG_INFO(bool enabled);
+    friend constexpr void LOG_WARNING(bool enabled);
+    friend constexpr void LOG_ERROR(bool enabled);
+    friend constexpr void LOG_FATAL(bool enabled);
+    friend constexpr void LOG_TODO(bool enabled);
 
     template<typename... Arguments> friend const std::string format(const std::string &message, Arguments... args);
 
@@ -96,6 +96,7 @@ private:
         static const fp_t fp;                                              \
         static constexpr const std::string_view name = #channel;           \
         static constexpr const log_channel channel = log_channel::channel; \
+        static bool enabled;                                               \
     }
 
     template<> struct log_channel_config<log_channel::NONE>
@@ -103,7 +104,34 @@ private:
         static const fp_t fp;
         static constexpr const std::string_view name = "";
         static constexpr const log_channel channel = log_channel::NONE;
+        static bool enabled;
     };
+
+    static constexpr bool enabled(log_channel c)
+    {
+        switch (c)
+        {
+            case log_channel::NONE:     return log_channel_config<log_channel::NONE>::enabled;
+            case log_channel::INFO:     return log_channel_config<log_channel::INFO>::enabled;
+            case log_channel::WARNING:  return log_channel_config<log_channel::WARNING>::enabled;
+            case log_channel::ERROR:    return log_channel_config<log_channel::ERROR>::enabled;
+            case log_channel::FATAL:    return log_channel_config<log_channel::FATAL>::enabled;
+            case log_channel::TODO:     return log_channel_config<log_channel::TODO>::enabled;
+        }
+    }
+
+    static constexpr void setEnabled(log_channel c, bool enabled)
+    {
+        switch (c)
+        {
+            case log_channel::NONE:     log_channel_config<log_channel::NONE>::enabled = enabled; break;
+            case log_channel::INFO:     log_channel_config<log_channel::INFO>::enabled = enabled; break;
+            case log_channel::WARNING:  log_channel_config<log_channel::WARNING>::enabled = enabled; break;
+            case log_channel::ERROR:    log_channel_config<log_channel::ERROR>::enabled = enabled; break;
+            case log_channel::FATAL:    log_channel_config<log_channel::FATAL>::enabled = enabled; break;
+            case log_channel::TODO:     log_channel_config<log_channel::TODO>::enabled = enabled; break;
+        }
+    }
 
     DECLARE_LOG_CHANNEL(INFO);
     DECLARE_LOG_CHANNEL(WARNING);
@@ -154,9 +182,6 @@ private:
 
     // thread safety for printing to console
     static std::mutex log_print_mutex;
-
-    // thread safety for writing to file streams
-    static std::mutex log_file_mutex;
 };
 
 struct logger final : private logger_base
@@ -175,11 +200,16 @@ private:
     logger() = delete;
 };
 
+// note for const char* overload:
+//   C++ prefers bool over std::string for "const char*" string literals
+//   when looking through all function overloads, hence this overload
+//   exists
 
 #define IMPLEMENT_LOG_CHANNEL(func_name, channel)                                         \
     template<typename... Arguments> __attribute__((noinline))                             \
     void func_name(const std::string &message, Arguments... args) {                       \
         using lb = logger_base;                                                           \
+        if (!lb::enabled(lb::log_channel::channel)) { return; }                           \
         std::lock_guard lock{logger_base::log_print_mutex};                               \
         lb::print(message,                                                                \
                   lb::log_channel::channel,                                               \
@@ -187,19 +217,19 @@ private:
                   std::forward<Arguments>(args)...);                                      \
     }                                                                                     \
     template<typename... Arguments>                                                       \
+    inline constexpr void func_name(const char *message, Arguments... args) {             \
+        func_name(std::string{message}, std::forward<Arguments>(args)...);                \
+    }                                                                                     \
+    template<typename... Arguments> __attribute__((noinline))                             \
     inline void func_name(std::ostream *stream, const std::string &message,               \
                           Arguments... args) {                                            \
         using lb = logger_base;                                                           \
+        if (!lb::enabled(lb::log_channel::channel)) { return; }                           \
         lb::stream(message, lb::log_channel::channel, stream,                             \
                    std::forward<Arguments>(args)...);                                     \
     }                                                                                     \
-    template<typename... Arguments> __attribute__((noinline))                             \
-    void func_name(std::ofstream *stream, const std::string &message,                     \
-                          Arguments... args) {                                            \
-        using lb = logger_base;                                                           \
-        std::lock_guard lock{logger_base::log_file_mutex};                                \
-        lb::stream(message, lb::log_channel::channel, stream,                             \
-                   std::forward<Arguments>(args)...);                                     \
+    inline constexpr void func_name(bool enabled) {                                       \
+        logger_base::setEnabled(logger_base::log_channel::channel, enabled);              \
     }
 
 IMPLEMENT_LOG_CHANNEL(LOG,          NONE);
