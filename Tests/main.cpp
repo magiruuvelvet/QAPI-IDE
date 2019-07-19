@@ -31,11 +31,19 @@ int main(int argc, char **argv)
 {
     LOG("Running tests on {}...", logger::get_system_details());
 
-    UnitTestServer server(SERVER_PORT);
+    UnitTestServer server;
 
-    while (!server.isRunning())
+    auto max_loop_count = 0xFFFFu, current_loop = 0u;
+    while (!(server.isRunning() && server.isSSLRunning()))
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        ++current_loop;
+        if (current_loop > max_loop_count)
+        {
+            // if reached here the http tests may fail as the server
+            // could not be started in time or crashed
+            break;
+        }
     }
 
     return bandit::run(argc, argv);

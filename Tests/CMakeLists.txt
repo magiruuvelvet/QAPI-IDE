@@ -36,9 +36,12 @@ if (UNIX)
 endif()
 
 set(UNIT_TEST_TEMPORARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/tmp")
+set(UNIT_TEST_REQUESTLIB_CERT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/request-lib")
 file(MAKE_DIRECTORY "${UNIT_TEST_TEMPORARY_DIR}")
 target_compile_definitions(Tests PRIVATE "-DUNIT_TEST_TEMPORARY_DIR=\"${UNIT_TEST_TEMPORARY_DIR}\"")
+target_compile_definitions(Tests PRIVATE "-DUNIT_TEST_REQUESTLIB_CERT_DIR=\"${UNIT_TEST_REQUESTLIB_CERT_DIR}\"")
 message(STATUS "Temporary directory for unit tests: ${UNIT_TEST_TEMPORARY_DIR}")
+message(STATUS "RequestLib certificate directory: ${UNIT_TEST_REQUESTLIB_CERT_DIR}")
 
 if (ENABLE_SCRIPTING)
     message(STATUS "Scripting enabled in target Tests.")

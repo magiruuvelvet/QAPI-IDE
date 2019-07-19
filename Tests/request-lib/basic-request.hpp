@@ -25,16 +25,16 @@ go_bandit([]{
 
         /**
          * Performs a simple HTTP request using a secure TLS connection.
-         *
-         * TODO: generate testing certificates for the unit test server
          */
-//        it("[basic-request HTTPS]", [&]{
-//            Request req("https://localhost");
-//            const auto res = req.performRequest();
-//            AssertThat(res.successful(), Equals(true));
-//            AssertThat(res.status(), Equals(200));
-//            AssertThat(res.hasHeader("Content-Type"), Equals(true));
-//            AssertThat(res.getHeaderValue("Content-Type"), Equals("text/html; charset=utf-8"));
-//        });
+        it("[basic-request HTTPS]", [&]{
+            Request req(fmt::format("https://127.0.0.1:{}", SERVER_PORT_SSL));
+            req.verifyCertificate(false);
+            const auto res = req.performRequest();
+            AssertThat(res.successful(), Equals(true));
+            AssertThat(res.status(), Equals(200));
+            AssertThat(res.hasHeader("Content-Type"), Equals(true));
+            AssertThat(res.getHeaderValue("Content-Type"), Equals("text/html; charset=utf-8"));
+            AssertThat(res.body(), Equals("test response"));
+        });
     });
 });

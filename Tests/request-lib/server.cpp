@@ -6,13 +6,21 @@
 #define CPPHTTPLIB_ZLIB_SUPPORT
 #include <httplib.h>
 
-UnitTestServer::UnitTestServer(const std::uint16_t &port)
+UnitTestServer::UnitTestServer()
 {
     this->server = std::make_shared<httplib::Server>();
+    this->server_ssl = std::make_shared<httplib::SSLServer>(
+        (std::string{UNIT_TEST_REQUESTLIB_CERT_DIR} + "/test.cert").c_str(),
+        (std::string{UNIT_TEST_REQUESTLIB_CERT_DIR} + "/test.key").c_str());
 
     using namespace httplib;
 
     this->server->Get("/", [](const Request &, Response &res) {
+        res.set_content("test response", "text/html; charset=utf-8");
+        res.status = 200;
+    });
+
+    this->server_ssl->Get("/", [](const Request &, Response &res) {
         res.set_content("test response", "text/html; charset=utf-8");
         res.status = 200;
     });
@@ -36,10 +44,14 @@ UnitTestServer::UnitTestServer(const std::uint16_t &port)
     // to detach it in its own independent thread to keep
     // the unit tests running
     this->server_thr = std::make_shared<std::thread>([&]{
-        this->server->listen("127.0.0.1", port);
+        this->server->listen("127.0.0.1", SERVER_PORT);
     });
-
     this->server_thr->detach();
+
+    this->server_ssl_thr = std::make_shared<std::thread>([&]{
+        this->server_ssl->listen("127.0.0.1", SERVER_PORT_SSL);
+    });
+    this->server_ssl_thr->detach();
 }
 
 UnitTestServer::~UnitTestServer()
@@ -47,6 +59,10 @@ UnitTestServer::~UnitTestServer()
     if (this->server)
     {
         this->server->stop();
+    }
+    if (this->server_ssl)
+    {
+        this->server_ssl->stop();
     }
 }
 
@@ -57,6 +73,18 @@ bool UnitTestServer::isRunning() const
     if (this->server)
     {
         return this->server->is_running();
+    }
+
+    return false;
+}
+
+bool UnitTestServer::isSSLRunning() const
+{
+    std::lock_guard lg{this->mutex_ssl};
+
+    if (this->server_ssl)
+    {
+        return this->server_ssl->is_running();
     }
 
     return false;
