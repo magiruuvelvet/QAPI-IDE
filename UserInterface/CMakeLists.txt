@@ -80,7 +80,7 @@ PUBLIC
 PRIVATE
     Logger
     RequestLib
-    JsonViewer
+    MarkupFormatLib
     fmt
 )
 

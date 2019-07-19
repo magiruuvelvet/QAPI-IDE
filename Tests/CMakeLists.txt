@@ -18,7 +18,7 @@ target_link_libraries(Tests
 PRIVATE
     Logger
     RequestLib
-    JsonViewer
+    MarkupFormatLib
     fmt
 )
 

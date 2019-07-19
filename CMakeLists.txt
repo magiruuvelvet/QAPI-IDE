@@ -71,7 +71,7 @@ include_directories("${PROJECT_SOURCE_DIR}/Libs/frozen/include")
 # Targets
 add_subdirectory(Logger)
 add_subdirectory(RequestLib)
-add_subdirectory(JsonViewer)
+add_subdirectory(MarkupFormatLib)
 
 option(ENABLE_SCRIPTING "Build with scripting support" OFF)
 if (ENABLE_SCRIPTING)
