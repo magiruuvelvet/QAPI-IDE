@@ -46,7 +46,7 @@ Scripting Interface dependencies:
    don't build a debug build or use static linkage, the link time increases heavily (minutes) and produces a
    gigabyte huge binary (2GB+) which is very slow and inefficient
 
- - **JavaScript**: not supported right now, but planned
+ - **JavaScript**: no external dependencies, everything is bundled
 
 Additional build requirements are:
 
@@ -57,8 +57,8 @@ Additional build requirements are:
 
 I plan to support scripting similar to Postman. I want to support JavaScript and C++
 as scripting backends. Scripting is disabled as of now by default in CMake.
-Some minimal C++ code running works already, but without binding of variables and
-functions.
+Some minimal C++ and JavaScript running works already, but without binding of
+variables and functions.
 
 **Why C++**
 
