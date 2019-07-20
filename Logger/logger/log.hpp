@@ -43,6 +43,7 @@
 #include <fmt/format.h>
 #include <fmt/printf.h>
 
+#include <logger/named_thread.hpp>
 #include <logger/version.hpp>
 
 // common data types
@@ -154,8 +155,8 @@ private:
     };
 
     static const std::string fmt_log_channel(log_channel channel, const std::string_view &fmt);
-    static constexpr const std::string_view print_fmt = "{}: ";
-    static constexpr const std::string_view stream_fmt = "[{}] ";
+    static constexpr const std::string_view print_fmt = "[{}] {}: ";
+    static constexpr const std::string_view stream_fmt = "[{}::{}] ";
 
     // default terminal printing of log messages
     // channel format: "CHANNEL: message"

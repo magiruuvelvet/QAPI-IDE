@@ -1,5 +1,7 @@
 #include <logger/log.hpp>
 
+#include <thread>
+
 std::mutex logger_base::log_print_mutex;
 
 const logger_base::fp_t logger_base::log_channel_config<logger_base::log_channel::NONE>::fp =     stdout;
@@ -20,10 +22,10 @@ const std::string logger_base::fmt_log_channel(log_channel channel, const std::s
 {
     if (log_channels.at(channel).empty())
     {
-        return {};
+        return fmt::format("[{}] ", named_thread::get_name(std::this_thread::get_id()));
     }
     else
     {
-        return fmt::format(fmt, log_channels.at(channel));
+        return fmt::format(fmt, named_thread::get_name(std::this_thread::get_id()), log_channels.at(channel));
     }
 }
