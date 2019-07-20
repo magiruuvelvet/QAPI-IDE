@@ -22,6 +22,7 @@ public:
     enum ErrorCode {
         NoError = 0,
         ParseError = -1,                    // script couldn't be parsed
+        SyntaxError = ParseError,           // ---
         RuntimeError = -2,                  // a runtime error occurred
         UnhandledExceptionThrown = -3,      // unhandled exception thrown (backend specific)
         MemoryAllocationError = -4,         // unable to allocate VM memory (backend specific)

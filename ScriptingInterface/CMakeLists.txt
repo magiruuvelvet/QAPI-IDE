@@ -19,6 +19,10 @@ if (ENABLE_CLING)
     if (LLVM_FOUND)
         message(STATUS "Enabling C++ scripting support...")
         set(LLVM_NO_DEAD_STRIP 1) # keep symbols for JIT resolution
+        target_include_directories(ScriptingInterface PRIVATE "${LLVM_INSTALL_PREFIX}/include")
+        target_link_libraries(ScriptingInterface PUBLIC clingInterpreter)
+        target_compile_definitions(ScriptingInterface PRIVATE "-DLLVMDIR=\"${LLVM_INSTALL_PREFIX}\"")
+        set_target_properties(ScriptingInterface PROPERTIES ENABLE_EXPORTS 1)
         target_compile_definitions(ScriptingInterface PRIVATE "-DSCRIPTING_CPP_SUPPORT")
     else()
         message(WARNING "C++ support requested, but no cling installation found!")
@@ -30,12 +34,16 @@ else()
 endif()
 
 # JavaScript scripting support (Macro: SCRIPTING_JAVASCRIPT_SUPPORT)
+# powered by duktape (https://duktape.org)
+# with the help of those nice C++14 bindings (https://github.com/vmanucharyan/duktape-cpp)
+# the bindings are a bit older already and not maintained anymore, but
+# they are enough for the use case of this application, so use them :)
 option(ENABLE_JAVASCRIPT "Build with JavaScript scripting support" OFF)
 if (ENABLE_JAVASCRIPT)
-    # NOTE: replace mujs with v8, mujs' API was not designed with OOP bindings in mind
-    #       and requires "static" functions for bindings
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(MUJS REQUIRED mujs)
+    target_include_directories(ScriptingInterface PRIVATE "${PROJECT_SOURCE_DIR}/Libs/duktape")
+    target_include_directories(ScriptingInterface PRIVATE "${PROJECT_SOURCE_DIR}/Libs/duktape-cpp/src")
+    add_library(duktape STATIC "${PROJECT_SOURCE_DIR}/Libs/duktape/duktape.c")
+    target_link_libraries(ScriptingInterface PRIVATE duktape)
     target_compile_definitions(ScriptingInterface PRIVATE "-DSCRIPTING_JAVASCRIPT_SUPPORT")
 else()
     message(STATUS "JavaScript scripting support disabled.")
@@ -62,17 +70,5 @@ PRIVATE
     Logger
     fmt
 )
-
-if (LLVM_FOUND)
-    target_include_directories(ScriptingInterface PRIVATE "${LLVM_INSTALL_PREFIX}/include")
-    target_link_libraries(ScriptingInterface PUBLIC clingInterpreter)
-    target_compile_definitions(ScriptingInterface PRIVATE "-DLLVMDIR=\"${LLVM_INSTALL_PREFIX}\"")
-    set_target_properties(ScriptingInterface PROPERTIES ENABLE_EXPORTS 1)
-endif()
-
-if (MUJS_FOUND)
-    target_include_directories(ScriptingInterface PRIVATE "${MUJS_INCLUDE_DIRS}")
-    target_link_libraries(ScriptingInterface PUBLIC "${MUJS_LIBRARIES}")
-endif()
 
 message(STATUS "${Esc}[1mConfigured target ScriptingInterface.${Esc}[m")
