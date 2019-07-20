@@ -1,0 +1,4 @@
+# GitHub Language Metrics Configuration
+# https://github.com/github/linguist#overrides
+
+Libs/* linguist-vendored
