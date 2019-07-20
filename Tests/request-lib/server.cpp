@@ -43,12 +43,14 @@ UnitTestServer::UnitTestServer()
     // cpp-httplib server is blocking execution so we need
     // to detach it in its own independent thread to keep
     // the unit tests running
-    this->server_thr = std::make_shared<std::thread>([&]{
+    this->server_thr = std::make_shared<named_thread>("HttpServer", [&]{
+        LOG("Starting HTTP server on port {}...", SERVER_PORT);
         this->server->listen("127.0.0.1", SERVER_PORT);
     });
     this->server_thr->detach();
 
-    this->server_ssl_thr = std::make_shared<std::thread>([&]{
+    this->server_ssl_thr = std::make_shared<named_thread>("HttpsServer", [&]{
+        LOG("Starting HTTPS server on port {}...", SERVER_PORT_SSL);
         this->server_ssl->listen("127.0.0.1", SERVER_PORT_SSL);
     });
     this->server_ssl_thr->detach();

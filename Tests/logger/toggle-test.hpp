@@ -23,9 +23,9 @@ go_bandit([]{
             LOG_INFO(&s, "not ignored");
 
             AssertThat(s.str(), Equals(
-R"([INFO] hello world
-[WARNING] warning
-[INFO] not ignored
+R"([TestRunner::INFO] hello world
+[TestRunner::WARNING] warning
+[TestRunner::INFO] not ignored
 )"
             ));
         });

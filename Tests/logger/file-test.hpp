@@ -19,7 +19,7 @@ go_bandit([]{
             // compare contents with excepted result
             std::ifstream if_(std::string{UNIT_TEST_TEMPORARY_DIR} + "/file.test");
             std::string res((std::istreambuf_iterator<char>(if_)), std::istreambuf_iterator<char>());
-            AssertThat(res, Equals("[INFO] hello world\n"));
+            AssertThat(res, Equals("[TestRunner::INFO] hello world\n"));
         });
     });
 });

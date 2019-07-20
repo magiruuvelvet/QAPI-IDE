@@ -29,6 +29,8 @@ using namespace bandit;
 
 int main(int argc, char **argv)
 {
+    named_thread::set_name(std::this_thread::get_id(), "TestRunner");
+
     LOG("Running tests on {}...", logger::get_system_details());
 
     UnitTestServer server;

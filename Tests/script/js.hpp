@@ -11,6 +11,9 @@ go_bandit([]{
     {
 
     describe("JavaScript", []{
+        it("[mozjs]", [&]{
+            Script src(Script::JavaScript);
+        });
     });
 
     }
