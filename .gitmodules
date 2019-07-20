@@ -16,3 +16,6 @@
 [submodule "Libs/frozen"]
 	path = Libs/frozen
 	url = https://github.com/serge-sans-paille/frozen.git
+[submodule "Libs/duktape-cpp"]
+	path = Libs/duktape-cpp
+	url = https://github.com/vmanucharyan/duktape-cpp.git
