@@ -9,6 +9,8 @@
 
 int main(int argc, char **argv)
 {
+    named_thread::set_name(std::this_thread::get_id(), "main");
+
     QApplication a(argc, argv);
     a.setApplicationName(app::name.data());
     a.setApplicationDisplayName(app::prettyName.data());
