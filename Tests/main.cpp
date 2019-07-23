@@ -79,7 +79,7 @@ int main(int argc, char **argv)
     auto ret = bandit::run(argc, argv);
 
     // show total time
-    LOG("Total time: {:.10f} msecs", logger->total_time());
+    LOG("Total time: {:.10f} ms", logger->total_time());
 
     return ret;
 }

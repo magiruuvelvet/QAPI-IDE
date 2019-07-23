@@ -43,7 +43,7 @@ namespace bandit
                 // append time to info reporter
                 if (print_enabled)
                 {
-                    std::cout << fmt::format(" " + fmt_precision + " msecs", ms);
+                    std::cout << fmt::format(" " + fmt_precision + " ms", ms);
                 }
 
                 // append log item
