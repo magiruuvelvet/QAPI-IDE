@@ -2,12 +2,14 @@
 
 #include <bandit/bandit.h>
 
+#include <benchmark.hpp>
+
 using namespace snowhouse;
 using namespace bandit;
 
 go_bandit([]{
     describe("Logger", []{
-        it("[file]", [&]{
+        benchmark_it("[file]", [&]{
             AssertThat(std::string{UNIT_TEST_TEMPORARY_DIR}.size(), IsGreaterThan(0));
 
             // write sample file

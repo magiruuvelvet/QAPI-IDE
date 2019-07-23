@@ -1,13 +1,10 @@
 #include <iostream>
 
-#define UNIT_TESTING
-
 #include <logger/log.hpp>
 
 #include <bandit/bandit.h>
 
-using namespace snowhouse;
-using namespace bandit;
+#include "benchmark.hpp"
 
 // Logger tests
 #include "logger/fmt-test.hpp"
@@ -27,6 +24,19 @@ using namespace bandit;
 #include "script/js.hpp"
 #endif
 
+bool check_has_info_reporter(const std::vector<const char*> &args)
+{
+    bool has_flag = false;
+    for (auto&& arg : args)
+    {
+        if (std::strcmp(arg, "--reporter=info") == 0)
+        {
+            has_flag = true;
+        }
+    }
+    return has_flag;
+}
+
 int main(int argc, char **argv)
 {
     named_thread::set_name(std::this_thread::get_id(), "TestRunner");
@@ -35,6 +45,7 @@ int main(int argc, char **argv)
 
     UnitTestServer server;
 
+    // wait for the unit test server to start
     auto max_loop_count = 0xFFFFu, current_loop = 0u;
     while (!(server.isRunning() && server.isSSLRunning()))
     {
@@ -48,5 +59,27 @@ int main(int argc, char **argv)
         }
     }
 
-    return bandit::run(argc, argv);
+    // check if the current bandit reporter is "info"
+    const std::vector<const char*> args(argv, argc + argv);
+    const bool has_info_reporter = check_has_info_reporter(args);
+    auto *logger = dynamic_cast<bandit::detail::default_benchmark_logger*>(bandit::detail::benchmark::registered_logger());
+
+    // if not, disable the benchmark console printing,
+    // as it works best with the "info" reporter
+    if (!has_info_reporter)
+    {
+        logger->enable_printing(false);
+    }
+    else
+    {
+        logger->set_precision(10);
+    }
+
+    // run all registered tests
+    auto ret = bandit::run(argc, argv);
+
+    // show total time
+    LOG("Total time: {:.10f} msecs", logger->total_time());
+
+    return ret;
 }

@@ -2,6 +2,8 @@
 
 #include <bandit/bandit.h>
 
+#include <benchmark.hpp>
+
 #include <sstream>
 
 using namespace snowhouse;
@@ -13,7 +15,7 @@ go_bandit([]{
         /**
          * Test if disabling and enabling of log channels works.
          */
-        it("[channel toggle]", [&]{
+        benchmark_it("[channel toggle]", [&]{
             std::stringstream s;
             LOG_INFO(&s, "hello world");
             LOG_INFO(false);

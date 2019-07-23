@@ -4,6 +4,8 @@
 
 #include <bandit/bandit.h>
 
+#include <benchmark.hpp>
+
 using namespace snowhouse;
 using namespace bandit;
 
@@ -13,7 +15,7 @@ go_bandit([]{
         /**
          * Performs a simple HTTP request using an insecure connection.
          */
-        it("[basic-request HTTP]", [&]{
+        benchmark_it("[basic-request HTTP]", [&]{
             Request req(fmt::format("http://127.0.0.1:{}", SERVER_PORT));
             const auto res = req.performRequest();
             AssertThat(res.successful(), Equals(true));
@@ -26,7 +28,7 @@ go_bandit([]{
         /**
          * Performs a simple HTTP request using a secure TLS connection.
          */
-        it("[basic-request HTTPS]", [&]{
+        benchmark_it("[basic-request HTTPS]", [&]{
             Request req(fmt::format("https://127.0.0.1:{}", SERVER_PORT_SSL));
             req.verifyCertificate(false);
             const auto res = req.performRequest();

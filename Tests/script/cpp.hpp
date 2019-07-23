@@ -2,6 +2,8 @@
 
 #include <bandit/bandit.h>
 
+#include <benchmark.hpp>
+
 using namespace snowhouse;
 using namespace bandit;
 
@@ -11,7 +13,7 @@ go_bandit([]{
     {
 
     describe("C++", []{
-        it("[static value binding]", [&]{
+        benchmark_it("[static value binding]", [&]{
             Script scr(Script::Cpp);
             std::string output;
             scr.setScriptContents("out << number << string << std::endl;");
@@ -22,7 +24,7 @@ go_bandit([]{
             AssertThat(output, Equals("42hello\n"));
         });
 
-        it("[error stream]", [&]{
+        benchmark_it("[error stream]", [&]{
             Script scr(Script::Cpp);
             std::string output, error;
             scr.setScriptContents(R"(err << "this is an error" << std::endl;)");
@@ -32,14 +34,14 @@ go_bandit([]{
             AssertThat(error, Equals("this is an error\n"));
         });
 
-        it("[return value]", [&]{
+        benchmark_it("[return value]", [&]{
             Script scr(Script::Cpp);
             scr.setScriptContents("return 42;");
             auto ret = scr.evaluate();
             AssertThat(ret, Equals(42));
         });
 
-        it("[if statement]", [&]{
+        benchmark_it("[if statement]", [&]{
             Script scr(Script::Cpp);
             std::string output;
             scr.setScriptContents(R"(

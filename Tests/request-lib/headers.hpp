@@ -2,19 +2,21 @@
 
 #include <bandit/bandit.h>
 
+#include <benchmark.hpp>
+
 using namespace snowhouse;
 using namespace bandit;
 
 go_bandit([]{
     describe("RequestLib", []{
-        it("[hasHeader]", [&]{
+        benchmark_it("[hasHeader]", [&]{
             Request req("");
             AssertThat(req.hasHeader("Test"), Equals(false));
             req.setHeader("Test", "");
             AssertThat(req.hasHeader("Test"), Equals(true));
         });
 
-        it("[removeHeader]", [&]{
+        benchmark_it("[removeHeader]", [&]{
             Request req("");
             req.setHeader("Test", "");
             req.removeHeader("Test");

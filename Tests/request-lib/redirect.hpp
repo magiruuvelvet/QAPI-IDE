@@ -4,6 +4,8 @@
 
 #include <bandit/bandit.h>
 
+#include <benchmark.hpp>
+
 using namespace snowhouse;
 using namespace bandit;
 
@@ -18,7 +20,7 @@ go_bandit([]{
          *
          * Final status code is expected to be 200 with a response body.
          */
-        it("[redirect with follow]", [&]{
+        benchmark_it("[redirect with follow]", [&]{
             Request req(fmt::format("http://127.0.0.1:{}/redir1", SERVER_PORT));
             req.followRedirects(true);
             const auto res = req.performRequest();
@@ -32,7 +34,7 @@ go_bandit([]{
          * Test request to redirection resource without redirecting.
          * Status code is expected to be 301.
          */
-        it("[redirect without follow]", [&]{
+        benchmark_it("[redirect without follow]", [&]{
             Request req(fmt::format("http://127.0.0.1:{}/redir1", SERVER_PORT));
             const auto res = req.performRequest();
             AssertThat(res.successful(), Equals(true));
