@@ -21,14 +21,53 @@ struct type_info final
     }
 };
 
-struct cling_args final
+// simulates argc and **argv with RAII
+// no need to manually clean up
+// modifying argv() causes undefined behavior, because the underlying data is read-only
+struct argv_t final
 {
-    static constexpr char *arg0 = const_cast<char*>("cling");
-    static constexpr char *arg1 = const_cast<char*>("-std=c++1z"); // C++17
-    static constexpr char *arg2 = const_cast<char*>("-L" LLVMDIR "/include");
-    static constexpr char *arg3 = const_cast<char*>("-I" LLVMDIR "/include");
-    static constexpr char *argv[] = {arg0, arg1, arg2, arg3, nullptr};
-    static constexpr int argc = 4;
+public:
+    template<typename... Arguments>
+    constexpr argv_t(Arguments... args)
+    {
+        this->args = std::vector<std::string_view>{args...};
+    }
+
+    constexpr void append(const std::string_view &argument)
+    {
+        this->args.emplace_back(argument);
+    }
+
+    constexpr int argc() const
+    {
+        return int(args.size());
+    }
+
+    char **argv() const
+    {
+        c_argv.clear();
+        std::transform(args.begin(), args.end(), std::back_inserter(c_argv), [](const std::string_view &arg) {
+            return const_cast<char*>(arg.data());
+        });
+        return c_argv.data();
+    }
+
+private:
+    std::vector<std::string_view> args;
+    mutable std::vector<char*> c_argv;
+};
+
+static argv_t cling_args{
+    "cling",
+    "-std=c++1z",
+    "-L" LLVMDIR "/include",
+    "-I" LLVMDIR "/include",
+
+    // TODO: cache using `-include-pch` to heavily speed up execution
+    // from ~500ms down to ~2ms per script
+    // this needs to be generated during the first script construction
+    // and reused afterwards
+    // (clang++ -std=c++1z header-cache.hpp -o header-cache.pch)
 };
 
 } // namespace
@@ -38,7 +77,7 @@ ClingCppScript::ClingCppScript()
     // FIXME: LLVMDIR should not be hardcoded, but configurable for flexibility
 
     // create a cling interpreter instance,
-    this->interp = std::make_shared<cling::Interpreter>(cling_args::argc, cling_args::argv, LLVMDIR);
+    this->interp = std::make_shared<cling::Interpreter>(cling_args.argc(), cling_args.argv(), LLVMDIR);
 
     // load common headers
     this->interp->declare("#include <iostream>");
