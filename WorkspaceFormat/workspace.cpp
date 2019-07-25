@@ -48,8 +48,24 @@ void Workspace::Request::removeHeader(const std::string &header, const std::stri
     }
 }
 
+const std::string Workspace::serializeJson() const
+{
+    json output;
+    this->serializeInternal(&output);
+    return output.dump();
+}
+
 const std::vector<uint8_t> Workspace::serialize() const
 {
+    json output;
+    this->serializeInternal(&output);
+    return json::to_cbor(output);
+}
+
+void Workspace::serializeInternal(void *outputJsonObj) const
+{
+    json &output = *static_cast<json*>(outputJsonObj);
+
     json workspace = {
         {"name", this->_data.name},
     };
@@ -65,10 +81,16 @@ const std::vector<uint8_t> Workspace::serialize() const
 
         for (auto&& req : group.requests())
         {
+            json headers = json::object();
+            for (auto&& header : req.headers())
+            {
+                headers[header.first].push_back(header.second);
+            }
+
             requests.push_back({
                 {"name", req.name()},
                 {"url", req.url()},
-                // TODO: headers
+                {"headers", headers},
             });
         }
 
@@ -78,5 +100,5 @@ const std::vector<uint8_t> Workspace::serialize() const
 
     workspace["requestgroups"] = requestgroups;
 
-    return json::to_cbor(workspace);
+    output = workspace;
 }

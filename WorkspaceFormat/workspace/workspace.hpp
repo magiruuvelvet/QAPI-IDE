@@ -72,6 +72,12 @@ public:
             : _name(name),
               _url(url)
         {}
+        Request(const std::string &name, const std::string &url,
+                const std::multimap<std::string, std::string> &headers)
+            : _name(name),
+              _url(url),
+              _headers(headers)
+        {}
 
         inline void setName(const std::string &name)
         { this->_name = name; }
@@ -103,10 +109,13 @@ public:
     inline const auto &requestGroups() const
     { return this->_data.requestGroups; }
 
+    const std::string serializeJson() const;
     const std::vector<std::uint8_t> serialize() const;
 
 private:
     WorkspaceData _data;
+
+    void serializeInternal(void *outputJsonObj) const;
 };
 
 #endif // WORKSPACEFORMAT_WORKSPACE_HPP
