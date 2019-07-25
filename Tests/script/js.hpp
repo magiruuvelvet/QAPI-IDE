@@ -7,6 +7,18 @@
 using namespace snowhouse;
 using namespace bandit;
 
+/**
+ * NOTES
+ *
+ * not supported by duktape (syntax, not runtime lib) :(
+ * engine can still be replaced early on
+ *
+ *  - of loop
+ *  - let keyword
+ *  - spread operator (...)
+ *
+ */
+
 go_bandit([]{
 
     if (ScriptingInterface::hasJavaScriptSupport())
@@ -62,6 +74,21 @@ go_bandit([]{
             auto ret = scr.evaluate(output);
             AssertThat(output, Equals(""));
             AssertThat(ret, Equals(2));
+        });
+
+        benchmark_it("[in loop]", [&]{
+            Script scr(Script::JavaScript);
+            std::string output;
+            scr.setScriptContents(R"(
+                var array = [3, 2, 1, 0];
+                for (index in array)
+                {
+                    console.print('' + index);
+                }
+            )");
+            auto ret = scr.evaluate(output);
+            AssertThat(output, Equals("0\n1\n2\n3\n"));
+            AssertThat(ret, Equals(0));
         });
     });
 
