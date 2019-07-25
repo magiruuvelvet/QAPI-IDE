@@ -82,7 +82,7 @@ Request::Request(const std::string &url, const std::string &method)
 }
 
 Request::Request(const std::string &url, const std::string &method,
-                 const std::map<std::string, std::string> &headers, const std::string &data,
+                 const std::multimap<std::string, std::string> &headers, const std::string &data,
                  std::uint16_t current_redirect_count, std::uint16_t max_redirect_attempts)
     : Request(url, method)
 {
@@ -144,15 +144,34 @@ bool Request::hasHeader(const std::string &header) const
     return this->_headers.count(copy) > 0;
 }
 
-const std::string Request::getHeaderValue(const std::string &header) const
+const std::list<std::string> Request::getHeaderValues(const std::string &header) const
 {
     if (this->hasHeader(header))
     {
         std::string copy = header;
         std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
-        return this->_headers.at(copy);
+
+        std::list<std::string> values;
+        for (auto&& h : this->_headers)
+        {
+            if (h.first == copy)
+            {
+                values.emplace_back(h.second);
+            }
+        }
+        return values;
     }
 
+    return {};
+}
+
+const std::string Request::getHeaderValue(const std::string &header) const
+{
+    const auto res = this->getHeaderValues(header);
+    if (!res.empty())
+    {
+        return res.front();
+    }
     return {};
 }
 
