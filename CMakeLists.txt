@@ -72,6 +72,7 @@ include_directories("${PROJECT_SOURCE_DIR}/Libs/frozen/include")
 add_subdirectory(Logger)
 add_subdirectory(RequestLib)
 add_subdirectory(MarkupFormatLib)
+add_subdirectory(WorkspaceFormat)
 
 option(ENABLE_SCRIPTING "Build with scripting support" OFF)
 if (ENABLE_SCRIPTING)
