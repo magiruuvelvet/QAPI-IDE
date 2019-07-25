@@ -134,7 +134,7 @@ void Request::setHeader(const std::string &header, const std::string &value)
 {
     std::string copy = header;
     std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
-    this->_headers.insert(std::pair<std::string, std::string>(copy, value));
+    this->_headers.insert(std::pair{copy, value});
 }
 
 bool Request::hasHeader(const std::string &header) const
