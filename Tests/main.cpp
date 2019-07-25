@@ -18,6 +18,9 @@
 #include "request-lib/url.hpp"
 #include "request-lib/headers.hpp"
 
+// WorkspaceFormat tests
+#include "workspace-fmt/serialize-test.hpp"
+
 // ScriptingInterface tests
 #ifdef HAS_SCRIPTING_INTERFACE
 #include "script/cpp.hpp"

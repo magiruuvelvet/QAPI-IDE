@@ -19,6 +19,7 @@ PRIVATE
     Logger
     RequestLib
     MarkupFormatLib
+    WorkspaceFormat
     fmt
 )
 
@@ -26,6 +27,7 @@ target_include_directories(Tests PRIVATE "${PROJECT_SOURCE_DIR}/Tests")
 target_include_directories(Tests PRIVATE "${PROJECT_SOURCE_DIR}/Libs/bandit")
 target_include_directories(Tests PRIVATE "${REQUESTLIB_INCLUDE_DIR}")
 target_include_directories(Tests PRIVATE "${JSONVIEWER_INCLUDE_DIR}")
+target_include_directories(Tests PRIVATE "${WORKSPACEFORMAT_INCLUDE_DIR}")
 target_include_directories(Tests PRIVATE "${LOGGER_INCLUDE_DIR}")
 
 # required for HTTP request library testing
