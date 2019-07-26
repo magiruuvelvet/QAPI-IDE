@@ -1,28 +1,23 @@
 # WorkspaceFormat
 
-string(ASCII 27 Esc)
-message(STATUS "${Esc}[1mConfiguring target WorkspaceFormat...${Esc}[m")
+set(CURRENT_TARGET "WorkspaceFormat")
 
-file(GLOB_RECURSE SourceList_WorkspaceFormat
-    "*.cpp"
-    "*.hpp"
-)
+message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
-add_library(WorkspaceFormat STATIC ${SourceList_WorkspaceFormat})
+CreateTarget(${CURRENT_TARGET} STATIC WorkspaceFormat 17)
+IncludeHeaderLibs(${CURRENT_TARGET})
 
-SetCppStandard(WorkspaceFormat 17)
-set_target_properties(WorkspaceFormat PROPERTIES PREFIX "")
-set_target_properties(WorkspaceFormat PROPERTIES OUTPUT_NAME "WorkspaceFormat")
-
-target_include_directories(WorkspaceFormat PRIVATE "${PROJECT_SOURCE_DIR}/WorkspaceFormat")
 target_include_directories(WorkspaceFormat PRIVATE "${LOGGER_INCLUDE_DIR}")
-set(WORKSPACEFORMAT_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/WorkspaceFormat" PARENT_SCOPE)
 
-target_link_libraries(WorkspaceFormat
+set(WORKSPACEFORMAT_INCLUDE_DIR "${CURRENT_TARGET_DIR}")
+set(WORKSPACEFORMAT_INCLUDE_DIR "${CURRENT_TARGET_DIR}" PARENT_SCOPE)
+message(STATUS "${CURRENT_TARGET} include directory: ${WORKSPACEFORMAT_INCLUDE_DIR}")
+
+target_link_libraries(${CURRENT_TARGET}
 PRIVATE
     nlohmann_json::nlohmann_json
     Logger
     fmt
 )
 
-message(STATUS "${Esc}[1mConfigured target WorkspaceFormat.${Esc}[m")
+message(STATUS "Configured target ${CURRENT_TARGET}.\n")

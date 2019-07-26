@@ -18,6 +18,9 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}"
 # Set C++ standard macro
 include(SetCppStandard)
 
+# Target creation macro
+include(CreateTarget)
+
 # Folder where generated files go
 set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/Generated)
 include_directories(${GENERATED_DIR})
@@ -55,7 +58,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unknown-pragmas -Wno-switch")
 
 # Debug mode flags
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-    message(STATUS "Building with development configuration")
+    message(STATUS "Building with development configuration.")
     add_definitions(-DDEBUG_BUILD)
 endif()
 
@@ -64,9 +67,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib-static)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# Header-only libraries
-include_directories("${PROJECT_SOURCE_DIR}/Libs/fmt/include")
-include_directories("${PROJECT_SOURCE_DIR}/Libs/frozen/include")
+# Dependencies
+add_subdirectory(Libs)
 
 # Targets
 add_subdirectory(Logger)

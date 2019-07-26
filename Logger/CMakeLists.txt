@@ -1,35 +1,19 @@
 # Logger
 
-string(ASCII 27 Esc)
-message(STATUS "${Esc}[1mConfiguring target Logger...${Esc}[m")
+set(CURRENT_TARGET "Logger")
 
-file(GLOB_RECURSE SourceList_Logger
-    "*.cpp"
-    "*.hpp"
-)
+message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
-# fmt formatting library
-message(STATUS "${Esc}[1m > Configuring sub target fmt...${Esc}[m")
-add_subdirectory("${PROJECT_SOURCE_DIR}/Libs/fmt" "${PROJECT_BINARY_DIR}/Libs/fmt")
-message(STATUS "${Esc}[1m > Configured sub target fmt.${Esc}[m")
+CreateTarget(${CURRENT_TARGET} STATIC Logger 17)
+IncludeHeaderLibs(${CURRENT_TARGET})
 
-
-add_library(Logger STATIC ${SourceList_Logger})
-
-SetCppStandard(Logger 17)
-set_target_properties(Logger PROPERTIES PREFIX "")
-set_target_properties(Logger PROPERTIES OUTPUT_NAME "Logger")
-
-# include header-only libraries
-target_include_directories(Logger PRIVATE "${PROJECT_SOURCE_DIR}/Libs/fmt/include")
-target_include_directories(Logger PRIVATE "${PROJECT_SOURCE_DIR}/Libs/frozen/include")
-
-target_include_directories(Logger PRIVATE "${PROJECT_SOURCE_DIR}/Logger")
-set(LOGGER_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/Logger" PARENT_SCOPE)
+set(LOGGER_INCLUDE_DIR "${CURRENT_TARGET_DIR}")
+set(LOGGER_INCLUDE_DIR "${CURRENT_TARGET_DIR}" PARENT_SCOPE)
+message(STATUS "${CURRENT_TARGET} include directory: ${LOGGER_INCLUDE_DIR}")
 
 # operating system details
 configure_file("logger/version.hpp.in" "${GENERATED_DIR}/logger/version.hpp")
 
-target_link_libraries(Logger PRIVATE fmt)
+target_link_libraries(${CURRENT_TARGET} PRIVATE fmt)
 
-message(STATUS "${Esc}[1mConfigured target Logger.${Esc}[m")
+message(STATUS "Configured target ${CURRENT_TARGET}.\n")

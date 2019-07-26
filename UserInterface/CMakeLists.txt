@@ -1,7 +1,8 @@
 # User Interface
 
-string(ASCII 27 Esc)
-message(STATUS "${Esc}[1mConfiguring target UserInterface...${Esc}[m")
+set(CURRENT_TARGET "UserInterface")
+
+message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
 file(GLOB_RECURSE SourceList_UserInterface
     "*.cpp"
@@ -65,14 +66,14 @@ else()
     add_custom_target(GenerateEmbeddedTranslations)
 endif()
 
-add_executable(UserInterface ${SourceList_UserInterface} ${RCC_TRANSLATION_SOURCES} ${QM_FILES})
-add_dependencies(UserInterface GenerateEmbeddedTranslations)
+add_executable(${CURRENT_TARGET} ${SourceList_UserInterface} ${RCC_TRANSLATION_SOURCES} ${QM_FILES})
+add_dependencies(${CURRENT_TARGET} GenerateEmbeddedTranslations)
 
-SetCppStandard(UserInterface 17)
-set_target_properties(UserInterface PROPERTIES PREFIX "")
-set_target_properties(UserInterface PROPERTIES OUTPUT_NAME "qapi-ide")
+SetCppStandard(${CURRENT_TARGET} 17)
+set_target_properties(${CURRENT_TARGET} PROPERTIES PREFIX "")
+set_target_properties(${CURRENT_TARGET} PROPERTIES OUTPUT_NAME "qapi-ide")
 
-target_link_libraries(UserInterface
+target_link_libraries(${CURRENT_TARGET}
 PUBLIC
     Qt5::Core
     Qt5::Gui
@@ -85,17 +86,22 @@ PRIVATE
     fmt
 )
 
-target_include_directories(UserInterface PRIVATE "${PROJECT_SOURCE_DIR}/UserInterface")
-target_include_directories(UserInterface PRIVATE "${REQUESTLIB_INCLUDE_DIR}")
-target_include_directories(UserInterface PRIVATE "${JSONVIEWER_INCLUDE_DIR}")
-target_include_directories(UserInterface PRIVATE "${WORKSPACEFORMAT_INCLUDE_DIR}")
-target_include_directories(UserInterface PRIVATE "${LOGGER_INCLUDE_DIR}")
+target_include_directories(${CURRENT_TARGET}
+PRIVATE
+    "${PROJECT_SOURCE_DIR}/UserInterface"
+    "${REQUESTLIB_INCLUDE_DIR}"
+    "${MARKUPFORMATLIB_INCLUDE_DIR}"
+    "${WORKSPACEFORMAT_INCLUDE_DIR}"
+    "${LOGGER_INCLUDE_DIR}"
+)
+
+IncludeHeaderLibs(${CURRENT_TARGET})
 
 if (ENABLE_SCRIPTING)
-    message(STATUS "Scripting enabled in target UserInterface.")
-    target_include_directories(UserInterface PRIVATE "${SCRIPTINGINTERFACE_INCLUDE_DIR}")
-    target_link_libraries(UserInterface PRIVATE ScriptingInterface)
-    target_compile_definitions(UserInterface PRIVATE "-DHAS_SCRIPTING_INTERFACE")
+    message(STATUS "Scripting enabled in target ${CURRENT_TARGET}.")
+    target_include_directories(${CURRENT_TARGET} PRIVATE "${SCRIPTINGINTERFACE_INCLUDE_DIR}")
+    target_link_libraries(${CURRENT_TARGET} PRIVATE ScriptingInterface)
+    target_compile_definitions(${CURRENT_TARGET} PRIVATE "-DHAS_SCRIPTING_INTERFACE")
 endif()
 
-message(STATUS "${Esc}[1mConfigured target UserInterface.${Esc}[m")
+message(STATUS "Configured target ${CURRENT_TARGET}.\n")

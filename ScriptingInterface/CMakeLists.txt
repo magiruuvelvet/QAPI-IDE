@@ -1,14 +1,11 @@
 # ScriptingInterface
 
-string(ASCII 27 Esc)
-message(STATUS "${Esc}[1mConfiguring target ScriptingInterface...${Esc}[m")
+set(CURRENT_TARGET "ScriptingInterface")
 
-file(GLOB_RECURSE SourceList_ScriptingInterface
-    "*.cpp"
-    "*.hpp"
-)
+message(STATUS "\nConfiguring target ${CURRENT_TARGET}...")
 
-add_library(ScriptingInterface STATIC ${SourceList_ScriptingInterface})
+CreateTarget(${CURRENT_TARGET} STATIC ScriptingInterface 17)
+IncludeHeaderLibs(${CURRENT_TARGET})
 
 # C++ scripting support (Macro: SCRIPTING_CPP_SUPPORT)
 # https://root.cern.ch/cling-build-instructions
@@ -19,11 +16,11 @@ if (ENABLE_CLING)
     if (LLVM_FOUND)
         message(STATUS "Enabling C++ scripting support...")
         set(LLVM_NO_DEAD_STRIP 1) # keep symbols for JIT resolution
-        target_include_directories(ScriptingInterface PRIVATE "${LLVM_INSTALL_PREFIX}/include")
-        target_link_libraries(ScriptingInterface PUBLIC clingInterpreter)
-        target_compile_definitions(ScriptingInterface PRIVATE "-DLLVMDIR=\"${LLVM_INSTALL_PREFIX}\"")
-        set_target_properties(ScriptingInterface PROPERTIES ENABLE_EXPORTS 1)
-        target_compile_definitions(ScriptingInterface PRIVATE "-DSCRIPTING_CPP_SUPPORT")
+        target_include_directories(${CURRENT_TARGET} PRIVATE "${LLVM_INSTALL_PREFIX}/include")
+        target_link_libraries(${CURRENT_TARGET} PUBLIC clingInterpreter)
+        target_compile_definitions(${CURRENT_TARGET} PRIVATE "-DLLVMDIR=\"${LLVM_INSTALL_PREFIX}\"")
+        set_target_properties(${CURRENT_TARGET} PROPERTIES ENABLE_EXPORTS 1)
+        target_compile_definitions(${CURRENT_TARGET} PRIVATE "-DSCRIPTING_CPP_SUPPORT")
     else()
         message(WARNING "C++ support requested, but no cling installation found!")
         set(ENABLE_CLING OFF CACHE "Build with C++ scripting support" INTERNAL FORCE)
@@ -41,11 +38,11 @@ endif()
 option(ENABLE_JAVASCRIPT "Build with JavaScript scripting support" OFF)
 if (ENABLE_JAVASCRIPT)
     message(STATUS "Enabling JavaScript scripting support...")
-    target_include_directories(ScriptingInterface PRIVATE "${PROJECT_SOURCE_DIR}/Libs/duktape")
-    target_include_directories(ScriptingInterface PRIVATE "${PROJECT_SOURCE_DIR}/Libs/duktape-cpp/src")
+    target_include_directories(${CURRENT_TARGET} PRIVATE "${PROJECT_SOURCE_DIR}/Libs/duktape")
+    target_include_directories(${CURRENT_TARGET} PRIVATE "${PROJECT_SOURCE_DIR}/Libs/duktape-cpp/src")
     add_library(duktape STATIC "${PROJECT_SOURCE_DIR}/Libs/duktape/duktape.c")
-    target_link_libraries(ScriptingInterface PRIVATE duktape)
-    target_compile_definitions(ScriptingInterface PRIVATE "-DSCRIPTING_JAVASCRIPT_SUPPORT")
+    target_link_libraries(${CURRENT_TARGET} PRIVATE duktape)
+    target_compile_definitions(${CURRENT_TARGET} PRIVATE "-DSCRIPTING_JAVASCRIPT_SUPPORT")
 else()
     message(STATUS "JavaScript scripting support disabled.")
     set(ENABLE_JAVASCRIPT OFF CACHE "Build with JavaScript scripting support" INTERNAL FORCE)
@@ -57,19 +54,19 @@ if (NOT ENABLE_CLING AND NOT ENABLE_JAVASCRIPT)
     set(ENABLE_SCRIPTING OFF CACHE "Build with scripting support" INTERNAL FORCE)
 endif()
 
-SetCppStandard(ScriptingInterface 17)
-set_target_properties(ScriptingInterface PROPERTIES PREFIX "")
-set_target_properties(ScriptingInterface PROPERTIES OUTPUT_NAME "ScriptingInterface")
+target_include_directories(${CURRENT_TARGET}
+PRIVATE
+    "${LOGGER_INCLUDE_DIR}"
+)
 
-target_include_directories(ScriptingInterface PRIVATE "${PROJECT_SOURCE_DIR}/ScriptingInterface")
-target_include_directories(ScriptingInterface PRIVATE "${PROJECT_SOURCE_DIR}/Libs/cpp-httplib")
-target_include_directories(ScriptingInterface PRIVATE "${LOGGER_INCLUDE_DIR}")
-set(SCRIPTINGINTERFACE_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/ScriptingInterface" PARENT_SCOPE)
+set(SCRIPTINGINTERFACE_INCLUDE_DIR "${CURRENT_TARGET_DIR}")
+set(SCRIPTINGINTERFACE_INCLUDE_DIR "${CURRENT_TARGET_DIR}" PARENT_SCOPE)
+message(STATUS "${CURRENT_TARGET} include directory: ${SCRIPTINGINTERFACE_INCLUDE_DIR}")
 
-target_link_libraries(ScriptingInterface
+target_link_libraries(${CURRENT_TARGET}
 PRIVATE
     Logger
     fmt
 )
 
-message(STATUS "${Esc}[1mConfigured target ScriptingInterface.${Esc}[m")
+message(STATUS "Configured target ${CURRENT_TARGET}.\n")
