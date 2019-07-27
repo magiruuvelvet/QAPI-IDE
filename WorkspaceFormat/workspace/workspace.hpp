@@ -1,11 +1,12 @@
 #ifndef WORKSPACEFORMAT_WORKSPACE_HPP
 #define WORKSPACEFORMAT_WORKSPACE_HPP
 
-#include <memory>
 #include <string>
 #include <map>
 #include <vector>
 #include <list>
+
+#include <utils/list.hpp>
 
 class Workspace
 {
@@ -13,6 +14,8 @@ public:
     Workspace();
     Workspace(const std::string &name);
     ~Workspace() = default;
+
+    using HeaderMap = list::ci_multimap<std::string, std::string>;
 
     // workspace empty check
     inline bool isEmtpy() const
@@ -80,7 +83,7 @@ public:
               _url(url)
         {}
         Request(const std::string &name, const std::string &url,
-                const std::multimap<std::string, std::string> &headers)
+                const HeaderMap &headers)
             : _name(name),
               _url(url),
               _headers(headers)
@@ -97,6 +100,7 @@ public:
         { return this->_url; }
 
         void addHeader(const std::string &header, const std::string &value);
+        void removeHeader(const std::string &header);
         void removeHeader(const std::string &header, const std::string &value);
         inline const auto &headers() const
         { return this->_headers; }
@@ -112,7 +116,7 @@ public:
 
         std::string _name;
         std::string _url;
-        std::multimap<std::string, std::string> _headers;
+        HeaderMap _headers;
     };
 
     void addRequestGroup(const RequestGroup &group);

@@ -15,6 +15,7 @@ target_link_libraries(${CURRENT_TARGET}
 PRIVATE
     nlohmann_json::nlohmann_json
     LoggerInterface
+    UtilsInterface
 )
 
 add_library(WorkspaceFormatInterface INTERFACE)
@@ -22,6 +23,7 @@ target_link_libraries(WorkspaceFormatInterface INTERFACE
     ${CURRENT_TARGET}
     nlohmann_json::nlohmann_json
     LoggerInterface
+    UtilsInterface
 )
 target_include_directories(WorkspaceFormatInterface INTERFACE "${WORKSPACEFORMAT_INCLUDE_DIR}")
 

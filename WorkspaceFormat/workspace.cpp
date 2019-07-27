@@ -30,6 +30,14 @@ void Workspace::Request::addHeader(const std::string &header, const std::string 
     this->_headers.insert(std::pair{header, value});
 }
 
+void Workspace::Request::removeHeader(const std::string &header)
+{
+    if (this->hasHeader(header))
+    {
+        this->_headers.erase(header);
+    }
+}
+
 void Workspace::Request::removeHeader(const std::string &header, const std::string &value)
 {
     auto iterator_pair = this->_headers.equal_range(header);
@@ -46,22 +54,14 @@ void Workspace::Request::removeHeader(const std::string &header, const std::stri
 
 bool Workspace::Request::hasHeader(const std::string &headerName) const
 {
-    return this->_headers.count(headerName) > 0;
+    return list::strcontains_key(this->_headers, headerName, string::case_insensitive_compare);
 }
 
 const std::list<std::string> Workspace::Request::headerValues(const std::string &headerName) const
 {
     if (this->hasHeader(headerName))
     {
-        std::list<std::string> values;
-        for (auto&& h : this->_headers)
-        {
-            if (h.first == headerName)
-            {
-                values.emplace_back(h.second);
-            }
-        }
-        return values;
+        return list::mm_values(this->_headers, headerName, string::case_insensitive_compare);
     }
 
     return {};
