@@ -71,6 +71,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 add_subdirectory(Libs)
 
 # Targets
+add_subdirectory(Utils)
 add_subdirectory(Logger)
 add_subdirectory(RequestLib)
 add_subdirectory(MarkupFormatLib)
