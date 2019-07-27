@@ -24,6 +24,7 @@ macro(CreateTarget CMakeTargetName Type OutputName CppVer)
 
     # sets the required C++ version on the target
     SetCppStandard(${CMakeTargetName} ${CppVer})
+    set_target_properties(${CMakeTargetName} PROPERTIES LINKER_LANGUAGE CXX)
 
     # add current directory to include paths of the target
     target_include_directories(${CMakeTargetName} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
