@@ -20,6 +20,7 @@
 
 // WorkspaceFormat tests
 #include "workspace-fmt/serialize-test.hpp"
+#include "workspace-fmt/deserialize-test.hpp"
 
 // ScriptingInterface tests
 #ifdef HAS_SCRIPTING_INTERFACE
