@@ -13,10 +13,6 @@ Workspace::Workspace(const std::string &name)
     this->_data.name = name;
 }
 
-Workspace::~Workspace()
-{
-}
-
 void Workspace::addRequestGroup(const RequestGroup &group)
 {
     this->_data.requestGroups.emplace_back(group);
@@ -46,6 +42,29 @@ void Workspace::Request::removeHeader(const std::string &header, const std::stri
             break;
         }
     }
+}
+
+bool Workspace::Request::hasHeader(const std::string &headerName) const
+{
+    return this->_headers.count(headerName) > 0;
+}
+
+const std::list<std::string> Workspace::Request::headerValues(const std::string &headerName) const
+{
+    if (this->hasHeader(headerName))
+    {
+        std::list<std::string> values;
+        for (auto&& h : this->_headers)
+        {
+            if (h.first == headerName)
+            {
+                values.emplace_back(h.second);
+            }
+        }
+        return values;
+    }
+
+    return {};
 }
 
 const std::string Workspace::serializeJson() const
@@ -101,4 +120,111 @@ void Workspace::serializeInternal(void *outputJsonObj) const
     workspace["requestgroups"] = requestgroups;
 
     output = workspace;
+}
+
+Workspace Workspace::deserialize(const std::string &json, bool *success)
+{
+    // deserialize workspace with the json deserializer
+    Workspace workspace;
+    deserializeInternal(&workspace, json, success);
+    return workspace;
+}
+
+Workspace Workspace::deserialize(const std::vector<std::uint8_t> &cbor, bool *success)
+{
+    // deserialize CBOR format and store as json
+    const auto json = json::from_cbor(cbor, true, false);
+
+    // check for deserialization errors without using an exception
+    if (json.is_discarded())
+    {
+        success ? *success = false : bool();
+        return {};
+    }
+
+    // continue deserialization with the internal json deserializer
+    Workspace workspace;
+    deserializeInternal(&workspace, json, success);
+    return workspace;
+}
+
+void Workspace::deserializeInternal(Workspace *output, const std::string &json_str, bool *success)
+{
+    // deserialize JSON string and store as json object
+    const auto json = json::parse(json_str, nullptr, false);
+
+    // check for deserialization errors without using an exception
+    if (json.is_discarded())
+    {
+        success ? *success = false : bool();
+        return;
+    }
+
+    // json library is exception based, continue parsing
+    // until we hit an error and keep an incomplete workspace object
+    try
+    {
+        // get workspace name
+        output->_data.name = json.at("name").get<std::string>();
+
+        // get request groups
+        const auto requestgroups = json.at("requestgroups");
+        if (!requestgroups.is_array())
+        {
+            throw;
+        }
+
+        for (auto&& group : requestgroups)
+        {
+            RequestGroup gr(group.at("name").get<std::string>());
+
+            // get requests
+            const auto requests = group.at("requests");
+            if (!requests.is_array())
+            {
+                throw;
+            }
+
+            for(auto&& request : requests)
+            {
+                Request req(
+                    request.at("name").get<std::string>(),
+                    request.at("url").get<std::string>()
+                );
+
+                // get request headers
+                const auto headers = request.at("headers");
+                if (!headers.is_object())
+                {
+                    throw;
+                }
+
+                for (auto&& header : headers.items())
+                {
+                    if (!header.value().is_array())
+                    {
+                        throw;
+                    }
+
+                    for (auto&& value : header.value())
+                    {
+                        req.addHeader(header.key(), value.get<std::string>());
+                    }
+                }
+
+                gr.addRequest(req);
+            }
+
+            output->addRequestGroup(gr);
+        }
+
+        // set success status
+        success ? *success = true : bool();
+    }
+    catch (...)
+    {
+        // set failure status
+        success ? *success = false : bool();
+        return;
+    }
 }

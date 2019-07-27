@@ -12,7 +12,14 @@ class Workspace
 public:
     Workspace();
     Workspace(const std::string &name);
-    ~Workspace();
+    ~Workspace() = default;
+
+    // workspace empty check
+    inline bool isEmtpy() const
+    {
+        return this->_data.name.empty() &&
+               this->_data.requestGroups.empty();
+    }
 
     inline void setName(const std::string &name)
     { this->_data.name = name; }
@@ -94,6 +101,9 @@ public:
         inline const auto &headers() const
         { return this->_headers; }
 
+        bool hasHeader(const std::string &headerName) const;
+        const std::list<std::string> headerValues(const std::string &headerName) const;
+
         inline const RequestGroup *parent() const
         { return this->_parent; }
 
@@ -112,10 +122,14 @@ public:
     const std::string serializeJson() const;
     const std::vector<std::uint8_t> serialize() const;
 
+    static Workspace deserialize(const std::string &json, bool *success = nullptr);
+    static Workspace deserialize(const std::vector<std::uint8_t> &cbor, bool *success = nullptr);
+
 private:
     WorkspaceData _data;
 
     void serializeInternal(void *outputJsonObj) const;
+    static void deserializeInternal(Workspace *output, const std::string &json, bool *success = nullptr);
 };
 
 #endif // WORKSPACEFORMAT_WORKSPACE_HPP
