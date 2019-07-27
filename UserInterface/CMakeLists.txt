@@ -79,20 +79,15 @@ PUBLIC
     Qt5::Gui
     Qt5::Widgets
 PRIVATE
-    Logger
-    RequestLib
-    MarkupFormatLib
-    WorkspaceFormat
-    fmt
+    LoggerInterface
+    RequestLibInterface
+    MarkupFormatLibInterface
+    WorkspaceFormatInterface
 )
 
 target_include_directories(${CURRENT_TARGET}
 PRIVATE
     "${PROJECT_SOURCE_DIR}/UserInterface"
-    "${REQUESTLIB_INCLUDE_DIR}"
-    "${MARKUPFORMATLIB_INCLUDE_DIR}"
-    "${WORKSPACEFORMAT_INCLUDE_DIR}"
-    "${LOGGER_INCLUDE_DIR}"
 )
 
 IncludeHeaderLibs(${CURRENT_TARGET})

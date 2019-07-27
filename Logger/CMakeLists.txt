@@ -16,4 +16,8 @@ configure_file("logger/version.hpp.in" "${GENERATED_DIR}/logger/version.hpp")
 
 target_link_libraries(${CURRENT_TARGET} PRIVATE fmt)
 
+add_library(LoggerInterface INTERFACE)
+target_link_libraries(LoggerInterface INTERFACE ${CURRENT_TARGET} fmt)
+target_include_directories(LoggerInterface INTERFACE "${LOGGER_INCLUDE_DIR}")
+
 message(STATUS "Configured target ${CURRENT_TARGET}.\n")

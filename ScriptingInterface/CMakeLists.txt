@@ -54,19 +54,13 @@ if (NOT ENABLE_CLING AND NOT ENABLE_JAVASCRIPT)
     set(ENABLE_SCRIPTING OFF CACHE "Build with scripting support" INTERNAL FORCE)
 endif()
 
-target_include_directories(${CURRENT_TARGET}
-PRIVATE
-    "${LOGGER_INCLUDE_DIR}"
-)
-
 set(SCRIPTINGINTERFACE_INCLUDE_DIR "${CURRENT_TARGET_DIR}")
 set(SCRIPTINGINTERFACE_INCLUDE_DIR "${CURRENT_TARGET_DIR}" PARENT_SCOPE)
 message(STATUS "${CURRENT_TARGET} include directory: ${SCRIPTINGINTERFACE_INCLUDE_DIR}")
 
 target_link_libraries(${CURRENT_TARGET}
 PRIVATE
-    Logger
-    fmt
+    LoggerInterface
 )
 
 message(STATUS "Configured target ${CURRENT_TARGET}.\n")

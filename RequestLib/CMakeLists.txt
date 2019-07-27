@@ -19,7 +19,6 @@ PRIVATE
     "${PROJECT_SOURCE_DIR}/Libs/url-cpp/include"
     "${OPENSSL_INCLUDE_DIR}"
     "${ZLIB_INCLUDE_DIRS}"
-    "${LOGGER_INCLUDE_DIR}"
 )
 
 set(REQUESTLIB_INCLUDE_DIR "${CURRENT_TARGET_DIR}")
@@ -32,9 +31,19 @@ PUBLIC
     OpenSSL::Crypto
     ${ZLIB_LIBRARIES}
 PRIVATE
-    Logger
+    LoggerInterface
     UrlCpp
-    fmt
 )
+
+add_library(RequestLibInterface INTERFACE)
+target_link_libraries(RequestLibInterface INTERFACE
+    ${CURRENT_TARGET}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${ZLIB_LIBRARIES}
+    LoggerInterface
+    UrlCpp
+)
+target_include_directories(RequestLibInterface INTERFACE "${REQUESTLIB_INCLUDE_DIR}")
 
 message(STATUS "Configured target RequestLib.\n")

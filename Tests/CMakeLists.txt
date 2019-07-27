@@ -9,20 +9,15 @@ IncludeHeaderLibs(${CURRENT_TARGET})
 
 target_link_libraries(${CURRENT_TARGET}
 PRIVATE
-    Logger
-    RequestLib
-    MarkupFormatLib
-    WorkspaceFormat
-    fmt
+    LoggerInterface
+    RequestLibInterface
+    MarkupFormatLibInterface
+    WorkspaceFormatInterface
 )
 
 target_include_directories(${CURRENT_TARGET}
 PRIVATE
     "${PROJECT_SOURCE_DIR}/Libs/bandit"
-    "${REQUESTLIB_INCLUDE_DIR}"
-    "${MARKUPFORMATLIB_INCLUDE_DIR}"
-    "${WORKSPACEFORMAT_INCLUDE_DIR}"
-    "${LOGGER_INCLUDE_DIR}"
 )
 
 # required for HTTP request library testing
