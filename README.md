@@ -50,8 +50,21 @@ Scripting Interface dependencies:
 
 Additional build requirements are:
 
- - C++17 compiler (clang 8+ or gcc 9+ are highly recommended)
+ - C++17 compiler (LLVM clang 8+ is supported)
+ - any C++17 runtime library is supported (libstdc++, libc++, ...)
  - cmake 3.12+
+
+Unsupported compilers (you are on your own for now, good luck):
+
+ - GNU/GCC (any version)
+ - Microsoft MSVC (any version)
+ - Apple clang (any version)
+
+Those compilers are not supported for now in early development
+to keep the code free from compiler macros. If you get any weird compile
+errors or template errors don't report them to me.
+Try LLVM clang version 8 or higher first to see if you get the same error,
+before opening an issue. Thanks for understanding.
 
 ## Scripting Interface
 
