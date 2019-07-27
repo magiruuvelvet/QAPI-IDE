@@ -3,7 +3,8 @@
 
 #include <string>
 #include <memory>
-#include <map>
+
+#include <utils/list.hpp>
 
 #include <requestlib/response.hpp>
 #include <requestlib/methods.hpp>
@@ -21,6 +22,8 @@ public:
     Request(const std::string &url, RequestMethod method = RequestMethod::GET, const std::string &custom_method = {});
     Request(const std::string &url, const std::string &method);
     ~Request();
+
+    using HeaderMap = list::ci_multimap<std::string, std::string>;
 
     // returns the original input URL
     inline const auto &urlString() const
@@ -84,7 +87,7 @@ private:
     void operator=(Request&) = delete;
 
     Request(const std::string &url, const std::string &method,
-            const std::multimap<std::string, std::string> &headers, const std::string &data,
+            const HeaderMap &headers, const std::string &data,
             std::uint16_t current_redirect_count, std::uint16_t max_redirect_attempts);
 
     std::string _full_url;
@@ -93,7 +96,7 @@ private:
     bool _followRedirects = false;
 
     std::shared_ptr<Url::Url> _url;
-    std::multimap<std::string, std::string> _headers;
+    HeaderMap _headers;
     std::string _data;
 
     std::uint16_t _redirect_count = 0;

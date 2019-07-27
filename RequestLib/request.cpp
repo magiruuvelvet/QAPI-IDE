@@ -8,6 +8,9 @@
 
 #include <url.h>
 
+#include <utils/string.hpp>
+#include <utils/list.hpp>
+
 Request::Request(const std::string &url, RequestMethod method, const std::string &custom_method)
     : _full_url(url)
 {
@@ -38,11 +41,11 @@ Request::Request(const std::string &url, RequestMethod method, const std::string
         this->_url->setScheme("http");
     }
 
-    if (this->_url->scheme() == "http" && this->_url->port() == 0)
+    if (string::compare(this->_url->scheme(), std::string{"http"}, string::case_insensitive_compare) && this->_url->port() == 0)
     {
         this->_url->setPort(80);
     }
-    else if (this->_url->scheme() == "https" && this->_url->port() == 0)
+    else if (string::compare(this->_url->scheme(), std::string{"https"}, string::case_insensitive_compare) && this->_url->port() == 0)
     {
         this->_url->setPort(443);
     }
@@ -51,29 +54,6 @@ Request::Request(const std::string &url, RequestMethod method, const std::string
     {
         this->_url->setPath("/");
     }
-
-//#ifdef DEBUG_BUILD
-//    LOG_INFO("{}, {}", *this, *this->_url);
-//    LOG_INFO(
-//              "Scheme:     {}\n"
-//        "      Userinfo:   {}\n"
-//        "      Host:       {}\n"
-//        "      Port:       {}\n"
-//        "      Path:       {}\n"
-//        "      Params:     {}\n"
-//        "      Query:      {}\n"
-//        "      Fragment:   {}\n",
-//        this->_url->scheme(),
-//        this->_url->userinfo(),
-//        this->_url->host(),
-//        this->_url->port(),
-//        this->_url->path(),
-//        this->_url->params(),
-//        this->_url->query(),
-//        this->_url->fragment(),
-//        this->_url->str()
-//    );
-//#endif
 }
 
 Request::Request(const std::string &url, const std::string &method)
@@ -82,7 +62,7 @@ Request::Request(const std::string &url, const std::string &method)
 }
 
 Request::Request(const std::string &url, const std::string &method,
-                 const std::multimap<std::string, std::string> &headers, const std::string &data,
+                 const HeaderMap &headers, const std::string &data,
                  std::uint16_t current_redirect_count, std::uint16_t max_redirect_attempts)
     : Request(url, method)
 {
@@ -132,34 +112,19 @@ void Request::appendToRequestBody(const std::string &data)
 
 void Request::setHeader(const std::string &header, const std::string &value)
 {
-    std::string copy = header;
-    std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
-    this->_headers.insert(std::pair{copy, value});
+    this->_headers.insert(std::pair{header, value});
 }
 
 bool Request::hasHeader(const std::string &header) const
 {
-    std::string copy = header;
-    std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
-    return this->_headers.count(copy) > 0;
+    return list::strcontains_key(this->_headers, header, string::case_insensitive_compare);
 }
 
 const std::list<std::string> Request::getHeaderValues(const std::string &header) const
 {
     if (this->hasHeader(header))
     {
-        std::string copy = header;
-        std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
-
-        std::list<std::string> values;
-        for (auto&& h : this->_headers)
-        {
-            if (h.first == copy)
-            {
-                values.emplace_back(h.second);
-            }
-        }
-        return values;
+        return list::mm_values(this->_headers, header, string::case_insensitive_compare);
     }
 
     return {};
@@ -179,9 +144,7 @@ void Request::removeHeader(const std::string &header)
 {
     if (this->hasHeader(header))
     {
-        std::string copy = header;
-        std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
-        this->_headers.erase(this->_headers.find(copy));
+        this->_headers.erase(header);
     }
 }
 
@@ -190,10 +153,11 @@ const Response Request::performRequest()
     // return invalid response on empty url
     if (this->_full_url.empty())
     {
-        return Response();
+        return {};
     }
 
-    struct ClientWrapper {
+    struct ClientWrapper
+    {
         ClientWrapper(const Url::Url *url, bool verifyCertificate)
             : url(url),
               verifyCertificate(verifyCertificate)
@@ -203,7 +167,7 @@ const Response Request::performRequest()
         // wrapper around Client and SSLClient to support both at the same time
         bool send(httplib::Request &req, httplib::Response &res)
         {
-            if (this->url->scheme() == "https")
+            if (string::compare(this->url->scheme(), std::string{"https"}, string::case_insensitive_compare))
             {
                 httplib::SSLClient client(this->url->host().c_str(), this->url->port());
                 client.enable_server_certificate_verification(this->verifyCertificate);
@@ -300,12 +264,10 @@ const Response Request::performRequest()
         response.setSuccess(true);
         response.setStatus(res->status);
 
-        std::multimap<std::string, std::string> headers;
+        HeaderMap headers;
         for (auto&& h : res->headers)
         {
-            std::string copy = h.first;
-            std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
-            headers.insert(std::pair<std::string, std::string>(copy, h.second));
+            headers.insert(std::pair{h.first, h.second});
         }
         response.setHeaders(headers);
 

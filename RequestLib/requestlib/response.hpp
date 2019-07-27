@@ -3,7 +3,8 @@
 
 #include <string>
 #include <list>
-#include <map>
+
+#include <utils/list.hpp>
 
 class Response final
 {
@@ -11,6 +12,8 @@ class Response final
 
 public:
     ~Response();
+
+    using HeaderMap = list::ci_multimap<std::string, std::string>;
 
     // returns true when the network request was successful
     // or false when a network or transport error occurred
@@ -53,7 +56,7 @@ private:
     void setSuccess(bool);
     void setStatus(int);
     void setVersion(const std::string &version);
-    void setHeaders(const std::multimap<std::string, std::string> &headers);
+    void setHeaders(const HeaderMap &headers);
     void setBody(const std::string &data);
 
     // if the network request was successful or not
@@ -63,7 +66,7 @@ private:
     int _status = 0;
     std::string _version;
     std::string _data;
-    std::multimap<std::string, std::string> _headers;
+    HeaderMap _headers;
 };
 
 #endif // REQUESTLIB_RESPONSE_HPP

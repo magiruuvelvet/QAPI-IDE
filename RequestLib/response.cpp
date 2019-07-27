@@ -2,6 +2,9 @@
 
 #include <algorithm>
 
+#include <utils/string.hpp>
+#include <utils/list.hpp>
+
 Response::Response()
 {
 }
@@ -12,27 +15,14 @@ Response::~Response()
 
 bool Response::hasHeader(const std::string &header) const
 {
-    std::string copy = header;
-    std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
-    return this->_headers.count(copy) > 0;
+    return list::strcontains_key(this->_headers, header, string::case_insensitive_compare);
 }
 
 const std::list<std::string> Response::getHeaderValues(const std::string &header) const
 {
     if (this->hasHeader(header))
     {
-        std::string copy = header;
-        std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
-
-        std::list<std::string> values;
-        for (auto&& h : this->_headers)
-        {
-            if (h.first == copy)
-            {
-                values.emplace_back(h.second);
-            }
-        }
-        return values;
+        return list::mm_values(this->_headers, header, string::case_insensitive_compare);
     }
 
     return {};
@@ -63,7 +53,7 @@ void Response::setVersion(const std::string &version)
     this->_version = version;
 }
 
-void Response::setHeaders(const std::multimap<std::string, std::string> &headers)
+void Response::setHeaders(const HeaderMap &headers)
 {
     this->_headers = headers;
 }

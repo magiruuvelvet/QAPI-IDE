@@ -32,6 +32,7 @@ PUBLIC
     ${ZLIB_LIBRARIES}
 PRIVATE
     LoggerInterface
+    UtilsInterface
     UrlCpp
 )
 
@@ -42,6 +43,7 @@ target_link_libraries(RequestLibInterface INTERFACE
     OpenSSL::Crypto
     ${ZLIB_LIBRARIES}
     LoggerInterface
+    UtilsInterface
     UrlCpp
 )
 target_include_directories(RequestLibInterface INTERFACE "${REQUESTLIB_INCLUDE_DIR}")
