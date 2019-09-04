@@ -123,6 +123,9 @@ public:
     inline const auto &requestGroups() const
     { return this->_data.requestGroups; }
 
+    // get the name of all request groups as string list
+    const std::list<std::string> getRequestGroupNames() const;
+
     const std::string serializeJson() const;
     const std::vector<std::uint8_t> serialize() const;
 

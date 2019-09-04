@@ -67,6 +67,16 @@ const std::list<std::string> Workspace::Request::headerValues(const std::string 
     return {};
 }
 
+const std::list<std::string> Workspace::getRequestGroupNames() const
+{
+    std::list<std::string> names;
+    for(auto&& group : this->_data.requestGroups)
+    {
+        names.emplace_back(group.name());
+    }
+    return names;
+}
+
 const std::string Workspace::serializeJson() const
 {
     json output;
