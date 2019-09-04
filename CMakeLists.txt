@@ -60,6 +60,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unknown-pragmas -Wno-switch")
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     message(STATUS "Building with development configuration.")
     add_definitions(-DDEBUG_BUILD)
+
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        message(STATUS "LLVM/clang detected. Enabling LLDB debugger tuning...")
+        add_definitions("-glldb")
+    endif()
 endif()
 
 # Set target destination for built targets
