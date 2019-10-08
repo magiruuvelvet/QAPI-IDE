@@ -14,12 +14,21 @@ MainWindow::MainWindow(QWidget *parent)
     this->_rootLayout->setContentsMargins(0,0,0,0);
     this->_rootLayout->setSpacing(0);
 
-    // create menu bar
-    this->_menuBar = std::make_unique<QMenuBar>(this);
+    // create menu bar - wrapper is required to avoid layout breakage when bar
+    // is removed from the layout (example: global menu bar)
+    this->_menuBarWrapperLayout = std::make_unique<QVBoxLayout>();
+    this->_menuBarWrapperLayout->setContentsMargins(0,0,0,0);
+    this->_menuBarWrapperLayout->setSpacing(0);
+    this->_menuBarWrapper = std::make_unique<QWidget>();
 
-    // not using a QMainWindow so this is gonna break if
-    // attempted to remove from the layout
-    this->_menuBar->setNativeMenuBar(false);
+    this->_menuBar = std::make_unique<QMenuBar>(this->_menuBarWrapper.get());
+    this->_menuBarWrapperLayout->addWidget(this->_menuBar.get());
+    this->_menuBarWrapper->setLayout(this->_menuBarWrapperLayout.get());
+
+    // DEV NOTE: use the below to code for layout debugging
+    // when global menu bar is enabled the menu bar is removed
+    // from the app layout which may cause issues
+    // this->_menuBar->setNativeMenuBar(false);
 
     // create file menu
     this->_fileMenu = menu_creator::make_menu(tr("&File"),
@@ -64,9 +73,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->_statusBar->setStatusText("test");
 
     // create layout
-    this->_rootLayout->addWidget(this->_menuBar.get());
+    this->_rootLayout->addWidget(this->_menuBarWrapper.get(), 0, Qt::AlignTop);
     this->_rootLayout->addSpacerItem(new QSpacerItem(0, 1, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    this->_rootLayout->addWidget(this->_statusBar.get());
+    this->_rootLayout->addWidget(this->_statusBar.get(), 0, Qt::AlignBottom);
 
     this->setLayout(this->_rootLayout.get());
 }

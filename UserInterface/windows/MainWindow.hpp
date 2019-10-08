@@ -34,7 +34,11 @@ private:
     std::unique_ptr<QVBoxLayout> _rootLayout;
     std::unique_ptr<StatusBar> _statusBar;
 
+    // menu bar
+    std::unique_ptr<QWidget> _menuBarWrapper;
+    std::unique_ptr<QVBoxLayout> _menuBarWrapperLayout;
     std::unique_ptr<QMenuBar> _menuBar;
+
     std::shared_ptr<menu> _fileMenu;
     std::shared_ptr<menu> _workbenchMenu;
     std::shared_ptr<menu> _workbenchMenu_replSubMenu;
